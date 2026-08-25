@@ -159,8 +159,16 @@ export function compute(rows, { days, reserve, takeaway }) {
   const coffee = priced(Math.max(coffeeMenuKg, coffeePlanKg) * 1000, CHAMPS.coffee);
 
   const matcha = priced(CHAMPS.matchaGPer14Days * scale14, CHAMPS.matcha);
-  const tea = priced(add(teaCups * USAGE.teaGPerCup), CHAMPS.tea);
+  const teaNeeded = add(teaCups * USAGE.teaGPerCup);
+  const teaShare = CHAMPS.teas.length ? 1 / CHAMPS.teas.length : 0;
+  const teas = CHAMPS.teas.map((catalog) => ({
+    ...priced(teaNeeded * teaShare, catalog),
+    share: teaShare,
+    emoji: catalog.emoji,
+    note: catalog.note,
+  }));
   const milkCleaner = priced(Math.max(1, Math.ceil(scale14)), CHAMPS.milkCleaner);
+  const groupCleaner = priced(Math.max(1, Math.ceil(scale14)), CHAMPS.groupCleaner);
 
   const milkNeeded = add(milkMl);
   const milks = [
@@ -188,7 +196,10 @@ export function compute(rows, { days, reserve, takeaway }) {
   const cupsCost = pricedCups.reduce((sum, cup) => sum + cup.cost, 0);
   const lidsCost = pricedLids.reduce((sum, lid) => sum + lid.cost, 0);
   const coffeeCost = coffee.cost;
-  const champsCost = matcha.cost + tea.cost + milkCleaner.cost;
+  const champsCost = matcha.cost
+    + teas.reduce((sum, item) => sum + item.cost, 0)
+    + milkCleaner.cost
+    + groupCleaner.cost;
   const milkCost = milks.reduce((sum, item) => sum + item.cost, 0);
   const smallCost = napkin.cost + stirrer.cost + straw.cost + maika.cost + sugarItem.cost + sleeve.cost + carrier2.cost + carrier4.cost;
   const grandTotal = cupsCost + lidsCost + champsCost + milkCost + smallCost;
@@ -214,9 +225,16 @@ export function compute(rows, { days, reserve, takeaway }) {
     trash60: priced(WISHLIST_USAGE.trash60PerWeek * weeks, WISHLIST.trash60),
     trash120: priced(WISHLIST_USAGE.trash120PerWeek * weeks, WISHLIST.trash120),
     matchaSet: priced(1, WISHLIST.matchaSet),
+    matchaSieve: priced(1, WISHLIST.matchaSieve),
     towelHolder: priced(1, WISHLIST.towelHolder),
   };
-  const wishlistCost = Object.values(wishlist).reduce((sum, item) => sum + item.cost, 0);
+  const wishlistTeas = WISHLIST.teas.map((catalog) => ({
+    ...priced(catalog.pack, catalog),
+    emoji: catalog.emoji,
+    note: catalog.note,
+  }));
+  const wishlistCost = Object.values(wishlist).reduce((sum, item) => sum + item.cost, 0)
+    + wishlistTeas.reduce((sum, item) => sum + item.cost, 0);
 
   return {
     days,
@@ -233,8 +251,9 @@ export function compute(rows, { days, reserve, takeaway }) {
     coffee,
     coffeeMenuKg,
     matcha,
-    tea,
+    teas,
     milkCleaner,
+    groupCleaner,
     milks,
     napkin,
     stirrer,
@@ -252,6 +271,7 @@ export function compute(rows, { days, reserve, takeaway }) {
     extras,
     extraCost,
     wishlist,
+    wishlistTeas,
     wishlistCost,
     combinedTotal: grandTotal + extraCost + coffeeCost,
   };
@@ -299,14 +319,14 @@ export function buildResultGroups(data) {
       `Потрібно ${formatNumber(Math.round(data.matcha.needed))} г · фасовка ${data.matcha.pack} г × ${formatMoney(data.matcha.packPrice)}`,
       CHAMPS.matcha.note,
     ]),
-    supplyCard({
-      ...data.tea,
-      emoji: '🫖',
-      amount: formatPackBuy(data.tea.packs, data.tea.buy, 'г'),
+    ...data.teas.map((item) => supplyCard({
+      ...item,
+      amount: formatPackBuy(item.packs, item.buy, 'г'),
     }, [
-      `${USAGE.teaGPerCup} г на порцію чаю · потрібно ${formatNumber(Math.round(data.tea.needed))} г`,
-      `Фасовка ${data.tea.pack} г × ${formatMoney(data.tea.packPrice)}`,
-    ]),
+      item.note,
+      `${USAGE.teaGPerCup} г на порцію · порівну між 4 основними чаями · потрібно ${formatNumber(Math.round(item.needed))} г`,
+      `Фасовка ${item.pack} г × ${formatMoney(item.packPrice)}`,
+    ])),
     supplyCard({
       ...data.milkCleaner,
       emoji: '🧴',
@@ -319,8 +339,23 @@ export function buildResultGroups(data) {
         'пляшок',
       ),
     }, [
-      '0,5 л на період · очищення стімера',
-      `${formatMoney(data.milkCleaner.packPrice)} / пляшка`,
+      CHAMPS.milkCleaner.note,
+      `${formatMoney(data.milkCleaner.packPrice)} / пляшка 0,5 л`,
+    ]),
+    supplyCard({
+      ...data.groupCleaner,
+      emoji: '🧪',
+      amount: formatPackBuy(
+        data.groupCleaner.packs,
+        null,
+        null,
+        'пляшка',
+        'пляшки',
+        'пляшок',
+      ),
+    }, [
+      CHAMPS.groupCleaner.note,
+      `${formatMoney(data.groupCleaner.packPrice)} / пляшка 1 л`,
     ]),
   ].filter(Boolean);
 
@@ -431,7 +466,7 @@ export function buildResultGroups(data) {
       total: data.champsCost > 0 ? {
         label: 'Сума 3 Champs без кави',
         amount: formatMoney(data.champsCost),
-        hint: 'Матча 180–280 г на 14 днів, чай і засіб для стімера. Кава в зернах — окремо в кінці',
+        hint: 'Матча Kokochiyoi, 4 основні чаї та хімія 3 Champs. Кава в зернах — окремо в кінці',
         href: CHAMPS_URL,
         linkLabel: 'Відкрити 3champsroastery.com.ua',
       } : null,
@@ -631,7 +666,22 @@ export function buildWishlistItems(data) {
       ),
     }, [
       WISHLIST.matchaSet.note,
-      `Одноразово на заклад · ${formatMoney(data.wishlist.matchaSet.packPrice)} · код ${WISHLIST.matchaSet.sku}`,
+      `Одноразово на заклад · ${formatMoney(data.wishlist.matchaSet.packPrice)} · арт. ${WISHLIST.matchaSet.sku}`,
+    ]),
+    supplyCard({
+      ...data.wishlist.matchaSieve,
+      emoji: '🕸️',
+      amount: formatPackBuy(
+        data.wishlist.matchaSieve.packs,
+        null,
+        null,
+        'сито',
+        'сита',
+        'сит',
+      ),
+    }, [
+      WISHLIST.matchaSieve.note,
+      `Одноразово на бар · ${formatMoney(data.wishlist.matchaSieve.packPrice)} · арт. ${WISHLIST.matchaSieve.sku}`,
     ]),
     supplyCard({
       ...data.wishlist.towelHolder,
@@ -648,5 +698,12 @@ export function buildWishlistItems(data) {
       WISHLIST.towelHolder.note,
       `Одноразово на бар · ${formatMoney(data.wishlist.towelHolder.packPrice)} · арт. ${WISHLIST.towelHolder.sku}`,
     ]),
+    ...data.wishlistTeas.map((item) => supplyCard({
+      ...item,
+      amount: formatPackBuy(item.packs, item.buy, 'г'),
+    }, [
+      item.note,
+      `Wish list, 1 пачка в асортимент · ${formatMoney(item.packPrice)} / ${item.pack} г`,
+    ])),
   ].filter(Boolean);
 }

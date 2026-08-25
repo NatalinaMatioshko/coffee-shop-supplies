@@ -163,7 +163,7 @@ export function WishlistPanel({ data }) {
           <div className="price-total wishlist-total">
             <div>
               <strong>Орієнтир wish list — не в сумі</strong>
-              <p>Пакети для сміття, набір для матчі і холдер для рушників на бар</p>
+              <p>Пакети для сміття, набір і сито для матчі, холдер і додаткові чаї 3 Champs</p>
               <a href={PETROVKA_URL} target="_blank" rel="noreferrer">
                 Каталог Petrovka HoReCa
               </a>
