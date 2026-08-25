@@ -97,10 +97,14 @@ export const MENU_ITEMS = [
   drink({ id: 'espresso', name: 'Еспресо', emoji: '☕', cupSize: 110, coffeeG: 9, daily: 10 }),
   drink({ id: 'doppio', name: 'Допіо', emoji: '☕', cupSize: 110, coffeeG: 18, daily: 5 }),
   drink({ id: 'macchiato', name: 'Макіато', emoji: '🥛', cupSize: 110, coffeeG: 9, milkMl: 20, daily: 3 }),
+  drink({ id: 'ristretto', name: 'Рістрето', emoji: '☕', cupSize: 110, coffeeG: 7, daily: 2 }),
+  drink({ id: 'cortado', name: 'Кортадо', emoji: '🥛', cupSize: 110, coffeeG: 18, milkMl: 40, daily: 3 }),
 
   drink({ id: 'cappuccino', name: 'Капучино', emoji: '🥛', cupSize: 180, coffeeG: 18, milkMl: 120, daily: 18 }),
   drink({ id: 'flatwhite', name: 'Флет-вайт', emoji: '🤎', cupSize: 180, coffeeG: 18, milkMl: 110, daily: 8 }),
   drink({ id: 'filterSmall', name: 'Фільтр мал.', emoji: '🫖', cupSize: 180, coffeeG: 12, daily: 6 }),
+  drink({ id: 'americano', name: 'Американо', emoji: '🟤', cupSize: 180, coffeeG: 18, daily: 4 }),
+  drink({ id: 'moka', name: 'Мокачино', emoji: '🍫', cupSize: 180, coffeeG: 18, cocoaG: 10, milkMl: 100, daily: 2 }),
 
   drink({ id: 'latte', name: 'Лате', emoji: '🥤', cupSize: 250, coffeeG: 18, milkMl: 180, daily: 12 }),
   drink({ id: 'raf', name: 'Раф', emoji: '🥛', cupSize: 250, coffeeG: 18, milkMl: 180, daily: 4 }),
