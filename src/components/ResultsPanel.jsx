@@ -27,7 +27,7 @@ export function ResultsPanel({ data }) {
   const groups = buildResultGroups(data);
 
   return (
-    <article className="card">
+    <article className="card results-card">
       <h2>Що закупити</h2>
       <p className="intro">Кількості з запасом і округлені до фасовки. Кава в зернах — окремо в кінці сторінки.</p>
       <div>

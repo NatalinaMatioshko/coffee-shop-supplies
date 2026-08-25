@@ -44,21 +44,23 @@ export function MenuPanel({ rows, cupsPerDay, data, onDailyChange }) {
   });
 
   return (
-    <article className="card">
+    <article className="card menu-card">
       <h2>Меню напоїв</h2>
       <p className="intro">
         Порції на день множаться на період. Напої згруповані за розміром стакана.
       </p>
-      {groups.map((group) => (
-        <section className="group" key={group.size}>
-          <h3>Стакан {group.size} мл</h3>
-          <div className="menu-grid">
-            {group.items.map((item) => (
-              <MenuItem key={item.id} item={item} onDailyChange={onDailyChange} />
-            ))}
-          </div>
-        </section>
-      ))}
+      <div className="menu-groups">
+        {groups.map((group) => (
+          <section className="group" key={group.size}>
+            <h3>Стакан {group.size} мл</h3>
+            <div className="menu-grid">
+              {group.items.map((item) => (
+                <MenuItem key={item.id} item={item} onDailyChange={onDailyChange} />
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
       <div className={`summary${delta !== 0 ? ' mismatch' : ''}`}>
         <strong>Сума порцій на день:</strong> {formatNumber(data.totalDaily)}
         {' '}(орієнтир «Напоїв на день»: {formatNumber(cupsPerDay)}

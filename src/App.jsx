@@ -45,15 +45,13 @@ export default function App() {
         onTakeawayChange={(value) => setTakeaway(Number(value))}
         onCupsPerDayChange={(value) => setCupsPerDay(parseCupsPerDay(value))}
       />
-      <section className="dashboard">
-        <MenuPanel
-          rows={rows}
-          cupsPerDay={cupsPerDay}
-          data={data}
-          onDailyChange={handleDailyChange}
-        />
-        <ResultsPanel data={data} />
-      </section>
+      <MenuPanel
+        rows={rows}
+        cupsPerDay={cupsPerDay}
+        data={data}
+        onDailyChange={handleDailyChange}
+      />
+      <ResultsPanel data={data} />
       <ExtraExpensesPanel data={data} />
       <CoffeePanel data={data} />
       <FooterBar />

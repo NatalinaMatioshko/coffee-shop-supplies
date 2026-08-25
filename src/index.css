@@ -34,17 +34,21 @@ input, select { width: 100%; border: 1px solid #d9ccc0; background: #fff; border
 input:focus, select:focus { outline: 3px solid #ead2bd; border-color: var(--latte); }
 .hint { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
 
-.dashboard { display: grid; grid-template-columns: 1fr 1.15fr; gap: 18px; }
+.menu-card { margin-bottom: 18px; }
+.menu-groups { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.menu-groups .group { margin-bottom: 0; }
+.results-card .items { grid-template-columns: repeat(3, 1fr); }
 .card { padding: 20px; }
 h2 { font-size: 18px; margin: 0 0 6px; }
 .intro { color: var(--muted); margin: 0 0 16px; font-size: 14px; line-height: 1.45; }
 .intro code { font-size: 12px; background: #f3ebe3; padding: 1px 6px; border-radius: 6px; }
 
-.menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.menu-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
 .menu-item { border: 1px solid var(--line); border-radius: 13px; padding: 13px; background: #fff; }
 .menu-item h3 { font-size: 14px; margin: 0; }
 .recipe { color: var(--muted); font-size: 12px; margin: 6px 0 0; line-height: 1.4; }
 .menu-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.menu-card .menu-row { grid-template-columns: 1fr; gap: 8px; }
 .menu-row label { font-weight: 600; font-size: 12px; margin-bottom: 5px; }
 .menu-row input { padding: 9px; font-size: 13px; }
 
@@ -90,13 +94,16 @@ button:hover { filter: brightness(1.08); }
 @media (max-width: 960px) {
   .hero, .footer-card { align-items: flex-start; flex-direction: column; }
   .control-panel { grid-template-columns: 1fr 1fr; }
-  .dashboard { grid-template-columns: 1fr; }
+  .menu-groups { grid-template-columns: 1fr 1fr; }
+  .menu-card .menu-row { grid-template-columns: 1fr 1fr; }
+  .results-card .items,
   .extra-card .items { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 560px) {
   .wrap { padding: 24px 12px 36px; }
-  .control-panel, .menu-grid, .items { grid-template-columns: 1fr; }
+  .control-panel, .menu-groups, .menu-grid, .items { grid-template-columns: 1fr; }
+  .menu-card .menu-row { grid-template-columns: 1fr 1fr; }
   .card { padding: 16px; }
   .price-total { flex-direction: column; align-items: flex-start; }
 }
@@ -105,5 +112,5 @@ button:hover { filter: brightness(1.08); }
   body { background: #fff; }
   .control-panel, .card { box-shadow: none; }
   button, .badge { display: none !important; }
-  .dashboard { grid-template-columns: 1fr 1fr; }
+  .menu-groups { grid-template-columns: 1fr 1fr; }
 }
