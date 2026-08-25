@@ -85,6 +85,8 @@ h2 { font-size: 18px; margin: 0 0 6px; }
 .extra-card .items { grid-template-columns: repeat(3, 1fr); }
 .coffee-card .coffee-items { grid-template-columns: 1fr; max-width: 420px; }
 .price-total.extra-total { background: var(--green); }
+.wishlist-card { border-style: dashed; }
+.price-total.wishlist-total { background: #8a7b72; }
 
 .footer-card { margin-top: 18px; padding: 17px 20px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
 .footer-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; max-width: 760px; }

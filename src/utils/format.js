@@ -20,6 +20,21 @@ export function plural(n, one, few, many) {
   return many;
 }
 
+export function formatPackBuy(
+  packs,
+  pieces,
+  pieceUnit,
+  packOne = 'упаковка',
+  packFew = 'упаковки',
+  packMany = 'упаковок',
+) {
+  const packWord = plural(packs, packOne, packFew, packMany);
+  if (pieces == null || pieceUnit == null) {
+    return `${formatNumber(packs)} ${packWord}`;
+  }
+  return `${formatNumber(packs)} ${packWord} · ${formatNumber(pieces)} ${pieceUnit}`;
+}
+
 export function recipeLine(item) {
   const parts = [];
   if (item.coffeeG) parts.push(`${item.coffeeG} г кави`);

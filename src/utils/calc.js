@@ -13,8 +13,10 @@ import {
   PETROVKA_URL,
   SUPPLIES,
   USAGE,
+  WISHLIST,
+  WISHLIST_USAGE,
 } from '../data/supplies.js';
-import { formatMoney, formatNumber, formatOne } from './format.js';
+import { formatMoney, formatNumber, formatOne, formatPackBuy, plural } from './format.js';
 
 export function roundUp(value, step = 1) {
   if (value <= 0) return 0;
@@ -33,15 +35,21 @@ function line(needed, pack) {
 
 function priced(needed, catalog) {
   const qty = line(needed, catalog.pack);
+  const packs = needed > 0 && catalog.minPacks
+    ? Math.max(catalog.minPacks, qty.packs)
+    : qty.packs;
+  const buy = packs * catalog.pack;
   return {
-    ...qty,
+    needed,
+    buy,
+    packs,
     pack: catalog.pack,
     packPrice: catalog.packPrice,
     unitPrice: catalog.unitPrice,
     sku: catalog.sku,
     title: catalog.title,
     url: catalog.url,
-    cost: qty.packs * catalog.packPrice,
+    cost: packs * catalog.packPrice,
   };
 }
 
@@ -64,6 +72,7 @@ export function compute(rows, { days, reserve, takeaway }) {
   let teaCups = 0;
   let napkins = 0;
   let stirrers = 0;
+  let straws = 0;
   let sugar = 0;
   let sleeves = 0;
   let takeawayDrinks = 0;
@@ -96,6 +105,7 @@ export function compute(rows, { days, reserve, takeaway }) {
       if (row.cupSize !== 110) sleeves += takeawayQty;
       takeawayHot += takeawayQty;
     }
+    if (row.cupSize !== 110) straws += takeawayQty;
   });
 
   const add = (value) => value * (1 + reserve);
@@ -168,6 +178,8 @@ export function compute(rows, { days, reserve, takeaway }) {
 
   const napkin = priced(add(napkins), SUPPLIES.napkin);
   const stirrer = priced(add(stirrers), SUPPLIES.stirrer);
+  const straw = priced(add(straws * USAGE.strawShare), SUPPLIES.straw);
+  const maika = priced(add(takeawayDrinks * USAGE.maikaShare), SUPPLIES.maika);
   const sugarItem = priced(add(sugar), SUPPLIES.sugar);
   const sleeve = priced(add(sleeves), SUPPLIES.sleeve);
   const carrier2 = priced(add(takeawayDrinks * USAGE.carrier2Share / 2), SUPPLIES.carrier2);
@@ -178,7 +190,7 @@ export function compute(rows, { days, reserve, takeaway }) {
   const coffeeCost = coffee.cost;
   const champsCost = matcha.cost + tea.cost + milkCleaner.cost;
   const milkCost = milks.reduce((sum, item) => sum + item.cost, 0);
-  const smallCost = napkin.cost + stirrer.cost + sugarItem.cost + sleeve.cost + carrier2.cost + carrier4.cost;
+  const smallCost = napkin.cost + stirrer.cost + straw.cost + maika.cost + sugarItem.cost + sleeve.cost + carrier2.cost + carrier4.cost;
   const grandTotal = cupsCost + lidsCost + champsCost + milkCost + smallCost;
 
   const weeks = days / 7;
@@ -192,8 +204,19 @@ export function compute(rows, { days, reserve, takeaway }) {
     dessertLid: priced(EXTRA_USAGE.dessertBoxPerDay * days, EXTRA_SUPPLIES.dessertLid),
     toiletSoap: priced(EXTRA_USAGE.toiletSoapLPerWeek * weeks, EXTRA_SUPPLIES.toiletSoap),
     toiletPaper: priced(EXTRA_USAGE.toiletPaperRollsPerWeek * weeks, EXTRA_SUPPLIES.toiletPaper),
+    wetWipes: priced(EXTRA_USAGE.wetWipesPerWeek * weeks, EXTRA_SUPPLIES.wetWipes),
+    cleaningWipes: priced(EXTRA_USAGE.cleaningWipesPerWeek * weeks, EXTRA_SUPPLIES.cleaningWipes),
+    paperTowel: priced(EXTRA_USAGE.paperTowelPerWeek * weeks, EXTRA_SUPPLIES.paperTowel),
   };
   const extraCost = Object.values(extras).reduce((sum, item) => sum + item.cost, 0);
+
+  const wishlist = {
+    trash60: priced(WISHLIST_USAGE.trash60PerWeek * weeks, WISHLIST.trash60),
+    trash120: priced(WISHLIST_USAGE.trash120PerWeek * weeks, WISHLIST.trash120),
+    matchaSet: priced(1, WISHLIST.matchaSet),
+    towelHolder: priced(1, WISHLIST.towelHolder),
+  };
+  const wishlistCost = Object.values(wishlist).reduce((sum, item) => sum + item.cost, 0);
 
   return {
     days,
@@ -215,6 +238,8 @@ export function compute(rows, { days, reserve, takeaway }) {
     milks,
     napkin,
     stirrer,
+    straw,
+    maika,
     sugar: sugarItem,
     sleeve,
     carrier2,
@@ -226,6 +251,8 @@ export function compute(rows, { days, reserve, takeaway }) {
     grandTotal,
     extras,
     extraCost,
+    wishlist,
+    wishlistCost,
     combinedTotal: grandTotal + extraCost + coffeeCost,
   };
 }
@@ -238,11 +265,11 @@ export function buildResultGroups(data) {
     .map((cup) => ({
       title: `Стакан ${cup.size} мл`,
       emoji: '🥤',
-      amount: `${formatNumber(cup.buy)} шт.`,
+      amount: formatPackBuy(cup.packs, cup.buy, 'шт.'),
       price: cup.cost > 0 ? formatMoney(cup.cost) : '',
       detail: [
         `Напої: ${cup.names.join(', ')}`,
-        `Потрібно ${formatNumber(Math.round(cup.needed))} · запас ${reservePct}% · ${formatNumber(cup.packs)} уп. по ${cup.pack} шт.`,
+        `Потрібно ${formatNumber(Math.round(cup.needed))} шт. · запас ${reservePct}% · фасовка ${cup.pack} шт.`,
         `${formatMoney(cup.unitPrice)}/шт · ${formatMoney(cup.packPrice)} за упаковку · арт. ${cup.sku}`,
         cup.lidId ? `Кришка: ${LID_CATALOG[cup.lidId]?.title}` : 'Кришки для 110 мл немає',
       ],
@@ -253,11 +280,11 @@ export function buildResultGroups(data) {
     .map((lid) => ({
       title: `${lid.title} · ${lid.forCups}`,
       emoji: '🔘',
-      amount: `${formatNumber(lid.buy)} шт.`,
+      amount: formatPackBuy(lid.packs, lid.buy, 'шт.'),
       price: lid.cost > 0 ? formatMoney(lid.cost) : '',
       detail: [
         `Напої: ${lid.names.join(', ')}`,
-        `Потрібно ${formatNumber(Math.round(lid.needed))} · запас ${reservePct}% · ${formatNumber(lid.packs)} уп. по ${lid.pack} шт.`,
+        `Потрібно ${formatNumber(Math.round(lid.needed))} шт. · запас ${reservePct}% · фасовка ${lid.pack} шт.`,
         `${formatMoney(lid.unitPrice)}/шт · ${formatMoney(lid.packPrice)} за упаковку · арт. ${lid.sku}`,
       ],
     }));
@@ -266,24 +293,31 @@ export function buildResultGroups(data) {
     supplyCard({
       ...data.matcha,
       emoji: '🍵',
-      amount: `${formatNumber(data.matcha.buy)} г`,
+      amount: formatPackBuy(data.matcha.packs, data.matcha.buy, 'г'),
     }, [
       `Орієнтир закладу: ${CHAMPS.matchaGRange} / 14 днів`,
-      `${formatNumber(data.matcha.packs)} уп. по ${data.matcha.pack} г × ${formatMoney(data.matcha.packPrice)}`,
+      `Потрібно ${formatNumber(Math.round(data.matcha.needed))} г · фасовка ${data.matcha.pack} г × ${formatMoney(data.matcha.packPrice)}`,
       CHAMPS.matcha.note,
     ]),
     supplyCard({
       ...data.tea,
       emoji: '🫖',
-      amount: `${formatNumber(data.tea.buy)} г`,
+      amount: formatPackBuy(data.tea.packs, data.tea.buy, 'г'),
     }, [
       `${USAGE.teaGPerCup} г на порцію чаю · потрібно ${formatNumber(Math.round(data.tea.needed))} г`,
-      `${formatNumber(data.tea.packs)} уп. по ${data.tea.pack} г × ${formatMoney(data.tea.packPrice)}`,
+      `Фасовка ${data.tea.pack} г × ${formatMoney(data.tea.packPrice)}`,
     ]),
     supplyCard({
       ...data.milkCleaner,
       emoji: '🧴',
-      amount: `${formatNumber(data.milkCleaner.buy)} шт.`,
+      amount: formatPackBuy(
+        data.milkCleaner.packs,
+        null,
+        null,
+        'пляшка',
+        'пляшки',
+        'пляшок',
+      ),
     }, [
       '0,5 л на період · очищення стімера',
       `${formatMoney(data.milkCleaner.packPrice)} / пляшка`,
@@ -294,60 +328,77 @@ export function buildResultGroups(data) {
     .filter((item) => item.buy > 0)
     .map((item) => supplyCard({
       ...item,
-      amount: `${formatNumber(item.buy / 1000)} л`,
+      amount: `${formatNumber(item.packs)} ${plural(item.packs, 'літр', 'літри', 'літрів')}`,
     }, [
       `${Math.round(item.share * 100)}% від молочних напоїв`,
-      `Потрібно ${formatOne(item.needed / 1000)} л · ${formatNumber(item.packs)} л × ${formatMoney(item.packPrice)}`,
+      `Потрібно ${formatOne(item.needed / 1000)} л · закупівля по 1 л, як продають`,
+      `${formatMoney(item.packPrice)} / л`,
     ]));
 
   const small = [
     supplyCard({
       ...data.sleeve,
       emoji: '🧣',
-      amount: `${formatNumber(data.sleeve.buy)} шт.`,
+      amount: formatPackBuy(data.sleeve.packs, data.sleeve.buy, 'шт.'),
     }, [
       'Лише гарячі takeaway, без стаканів 110 мл',
-      `Потрібно ${formatNumber(Math.round(data.sleeve.needed))} · ${formatNumber(data.sleeve.packs)} уп. по ${data.sleeve.pack}`,
+      `Потрібно ${formatNumber(Math.round(data.sleeve.needed))} шт. · фасовка ${data.sleeve.pack} шт.`,
     ]),
     supplyCard({
       ...data.napkin,
       emoji: '🤍',
-      amount: `${formatNumber(data.napkin.buy)} шт.`,
+      amount: formatPackBuy(data.napkin.packs, data.napkin.buy, 'шт.'),
     }, [
       `${USAGE.napkinPerDrink} на напій`,
-      `Потрібно ${formatNumber(Math.round(data.napkin.needed))} · ${formatNumber(data.napkin.packs)} уп. по ${formatNumber(data.napkin.pack)}`,
+      `Потрібно ${formatNumber(Math.round(data.napkin.needed))} шт. · фасовка ${formatNumber(data.napkin.pack)} шт.`,
     ]),
     supplyCard({
       ...data.stirrer,
       emoji: '🪵',
-      amount: `${formatNumber(data.stirrer.buy)} шт.`,
+      amount: formatPackBuy(data.stirrer.packs, data.stirrer.buy, 'шт.'),
     }, [
       'Гарячі takeaway',
-      `Потрібно ${formatNumber(Math.round(data.stirrer.needed))} · ${formatNumber(data.stirrer.packs)} уп. по ${data.stirrer.pack}`,
+      `Потрібно ${formatNumber(Math.round(data.stirrer.needed))} шт. · фасовка ${data.stirrer.pack} шт.`,
+    ]),
+    supplyCard({
+      ...data.straw,
+      emoji: '🥤',
+      amount: formatPackBuy(data.straw.packs, data.straw.buy, 'шт.'),
+    }, [
+      'Takeaway без стаканів 110 мл, індивід. упаковка',
+      `Потрібно ${formatNumber(Math.round(data.straw.needed))} шт. · фасовка ${data.straw.pack} шт.`,
+    ]),
+    supplyCard({
+      ...data.maika,
+      emoji: '🛍️',
+      amount: formatPackBuy(data.maika.packs, data.maika.buy, 'шт.'),
+    }, [
+      `${Math.round(USAGE.maikaShare * 100)}% takeaway — пакет-майка на кілька позицій`,
+      `Потрібно ${formatNumber(Math.round(data.maika.needed))} шт. · фасовка ${data.maika.pack} шт.`,
     ]),
     supplyCard({
       ...data.sugar,
       emoji: '🍬',
-      amount: `${formatNumber(data.sugar.buy)} шт.`,
+      amount: formatPackBuy(data.sugar.packs, data.sugar.buy, 'шт.'),
     }, [
       `${Math.round(USAGE.sugarShare * 100)}% напоїв, стіки 5 г`,
-      `Потрібно ${formatNumber(Math.round(data.sugar.needed))} · ${formatNumber(data.sugar.packs)} уп. по ${data.sugar.pack}`,
+      `Потрібно ${formatNumber(Math.round(data.sugar.needed))} шт. · фасовка ${data.sugar.pack} шт.`,
     ]),
     supplyCard({
       ...data.carrier2,
       emoji: '📦',
-      amount: `${formatNumber(data.carrier2.buy)} шт.`,
+      amount: formatPackBuy(data.carrier2.packs, data.carrier2.buy, 'шт.'),
     }, [
       `${Math.round(USAGE.carrier2Share * 100)}% takeaway як замовлення на 2`,
-      `Потрібно ${formatNumber(Math.round(data.carrier2.needed))} · ${formatNumber(data.carrier2.packs)} уп. по ${data.carrier2.pack}`,
+      `Потрібно ${formatNumber(Math.round(data.carrier2.needed))} шт. · фасовка ${data.carrier2.pack} шт.`,
     ]),
     supplyCard({
       ...data.carrier4,
       emoji: '📦',
-      amount: `${formatNumber(data.carrier4.buy)} шт.`,
+      amount: formatPackBuy(data.carrier4.packs, data.carrier4.buy, 'шт.'),
     }, [
       `${Math.round(USAGE.carrier4Share * 100)}% takeaway як замовлення на 4`,
-      `Потрібно ${formatNumber(Math.round(data.carrier4.needed))} · ${formatNumber(data.carrier4.packs)} уп. по ${data.carrier4.pack}`,
+      `Потрібно ${formatNumber(Math.round(data.carrier4.needed))} шт. · фасовка ${data.carrier4.pack} шт.`,
     ]),
   ].filter(Boolean);
 
@@ -402,7 +453,7 @@ export function buildResultGroups(data) {
       total: data.smallCost > 0 ? {
         label: 'Сума за дрібницю',
         amount: formatMoney(data.smallCost),
-        hint: 'Серветки, мішалки, цукор, манжети, тримачі',
+        hint: 'Серветки, мішалки, трубочки, майки, цукор, манжети, тримачі',
         href: PETROVKA_URL,
         linkLabel: 'Каталог Petrovka HoReCa',
       } : null,
@@ -415,74 +466,122 @@ export function buildExtraItems(data) {
     supplyCard({
       ...data.extras.cloth,
       emoji: '🧹',
-      amount: `${formatNumber(data.extras.cloth.buy)} шт.`,
+      amount: formatPackBuy(data.extras.cloth.packs, data.extras.cloth.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.cloth.note,
-      `${EXTRA_USAGE.clothsPerWeek} шт. на тиждень · ${formatNumber(data.extras.cloth.packs)} уп. по ${data.extras.cloth.pack}`,
+      `${EXTRA_USAGE.clothsPerWeek} шт. на тиждень · фасовка ${data.extras.cloth.pack} шт.`,
     ]),
     supplyCard({
       ...data.extras.gloves,
       emoji: '🧤',
-      amount: `${formatNumber(data.extras.gloves.buy)} шт.`,
+      amount: formatPackBuy(data.extras.gloves.packs, data.extras.gloves.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.gloves.note,
-      `${EXTRA_USAGE.glovesPerWeek} шт. на тиждень · ${formatNumber(data.extras.gloves.packs)} уп. по ${data.extras.gloves.pack}`,
+      `${EXTRA_USAGE.glovesPerWeek} шт. на тиждень · фасовка ${data.extras.gloves.pack} шт.`,
     ]),
     supplyCard({
       ...data.extras.sanitizer,
       emoji: '🧴',
-      amount: `${formatOne(data.extras.sanitizer.buy)} л`,
+      amount: formatPackBuy(
+        data.extras.sanitizer.packs,
+        data.extras.sanitizer.buy,
+        'л',
+        'пляшка',
+        'пляшки',
+        'пляшок',
+      ),
     }, [
       EXTRA_SUPPLIES.sanitizer.note,
-      `${formatOne(EXTRA_USAGE.sanitizerLPerWeek)} л на тиждень · ${formatNumber(data.extras.sanitizer.packs)} пл.`,
+      `${formatOne(EXTRA_USAGE.sanitizerLPerWeek)} л на тиждень · продають по 1 л`,
     ]),
     supplyCard({
       ...data.extras.dishSoap,
       emoji: '🫧',
-      amount: `${formatOne(data.extras.dishSoap.buy)} л`,
+      amount: formatPackBuy(
+        data.extras.dishSoap.packs,
+        data.extras.dishSoap.buy,
+        'л',
+        'каністра',
+        'каністри',
+        'каністр',
+      ),
     }, [
       EXTRA_SUPPLIES.dishSoap.note,
-      `${formatOne(EXTRA_USAGE.dishSoapLPerWeek)} л на тиждень · ${formatNumber(data.extras.dishSoap.packs)} кан.`,
+      `${formatOne(EXTRA_USAGE.dishSoapLPerWeek)} л на тиждень · фасовка 5 л`,
     ]),
     supplyCard({
       ...data.extras.kraftBag,
       emoji: '🛍️',
-      amount: `${formatNumber(data.extras.kraftBag.buy)} шт.`,
+      amount: formatPackBuy(data.extras.kraftBag.packs, data.extras.kraftBag.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.kraftBag.note,
-      `${EXTRA_USAGE.kraftBagPerDay} шт. на день · ${formatNumber(data.extras.kraftBag.packs)} уп. по ${data.extras.kraftBag.pack}`,
+      `${EXTRA_USAGE.kraftBagPerDay} шт. на день · фасовка ${data.extras.kraftBag.pack} шт.`,
     ]),
     supplyCard({
       ...data.extras.dessertBox,
       emoji: '🍱',
-      amount: `${formatNumber(data.extras.dessertBox.buy)} шт.`,
+      amount: formatPackBuy(data.extras.dessertBox.packs, data.extras.dessertBox.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.dessertBox.note,
-      `${EXTRA_USAGE.dessertBoxPerDay} шт. на день · ${formatNumber(data.extras.dessertBox.packs)} уп. по ${data.extras.dessertBox.pack}`,
+      `${EXTRA_USAGE.dessertBoxPerDay} шт. на день · фасовка ${data.extras.dessertBox.pack} шт.`,
     ]),
     supplyCard({
       ...data.extras.dessertLid,
       emoji: '⭕',
-      amount: `${formatNumber(data.extras.dessertLid.buy)} шт.`,
+      amount: formatPackBuy(data.extras.dessertLid.packs, data.extras.dessertLid.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.dessertLid.note,
-      `По 1 кришці на контейнер · ${formatNumber(data.extras.dessertLid.packs)} уп. по ${data.extras.dessertLid.pack}`,
+      `По 1 кришці на контейнер · фасовка ${data.extras.dessertLid.pack} шт.`,
     ]),
     supplyCard({
       ...data.extras.toiletSoap,
       emoji: '🧼',
-      amount: `${formatOne(data.extras.toiletSoap.buy)} л`,
+      amount: formatPackBuy(
+        data.extras.toiletSoap.packs,
+        data.extras.toiletSoap.buy,
+        'л',
+        'бутель',
+        'бутелі',
+        'бутелів',
+      ),
     }, [
       EXTRA_SUPPLIES.toiletSoap.note,
-      `${formatOne(EXTRA_USAGE.toiletSoapLPerWeek)} л на тиждень · ${formatNumber(data.extras.toiletSoap.packs)} бут. 5 л`,
+      `${formatOne(EXTRA_USAGE.toiletSoapLPerWeek)} л на тиждень · фасовка 5 л`,
     ]),
     supplyCard({
       ...data.extras.toiletPaper,
       emoji: '🧻',
-      amount: `${formatNumber(data.extras.toiletPaper.buy)} рул.`,
+      amount: formatPackBuy(data.extras.toiletPaper.packs, data.extras.toiletPaper.buy, 'рул.'),
     }, [
       EXTRA_SUPPLIES.toiletPaper.note,
-      `${EXTRA_USAGE.toiletPaperRollsPerWeek} рулони на тиждень · ${formatNumber(data.extras.toiletPaper.packs)} уп. по ${data.extras.toiletPaper.pack}`,
+      `${EXTRA_USAGE.toiletPaperRollsPerWeek} рулони на тиждень · фасовка ${data.extras.toiletPaper.pack} рул.`,
+    ]),
+    supplyCard({
+      ...data.extras.wetWipes,
+      emoji: '💧',
+      amount: formatPackBuy(data.extras.wetWipes.packs, data.extras.wetWipes.buy, 'шт.'),
+    }, [
+      EXTRA_SUPPLIES.wetWipes.note,
+      `${EXTRA_USAGE.wetWipesPerWeek} шт. на тиждень · фасовка ${data.extras.wetWipes.pack} шт.`,
+      `${formatMoney(data.extras.wetWipes.packPrice)} / уп. · арт. ${EXTRA_SUPPLIES.wetWipes.sku}`,
+    ]),
+    supplyCard({
+      ...data.extras.cleaningWipes,
+      emoji: '🧽',
+      amount: formatPackBuy(data.extras.cleaningWipes.packs, data.extras.cleaningWipes.buy, 'шт.'),
+    }, [
+      EXTRA_SUPPLIES.cleaningWipes.note,
+      `${EXTRA_USAGE.cleaningWipesPerWeek} шт. на тиждень · фасовка ${data.extras.cleaningWipes.pack} шт.`,
+      `${formatMoney(data.extras.cleaningWipes.packPrice)} / уп. · арт. ${EXTRA_SUPPLIES.cleaningWipes.sku}`,
+    ]),
+    supplyCard({
+      ...data.extras.paperTowel,
+      emoji: '🧻',
+      amount: formatPackBuy(data.extras.paperTowel.packs, data.extras.paperTowel.buy, 'шт.'),
+    }, [
+      EXTRA_SUPPLIES.paperTowel.note,
+      `${EXTRA_USAGE.paperTowelPerWeek} шт. на тиждень · фасовка ${data.extras.paperTowel.pack} шт.`,
+      `${formatMoney(data.extras.paperTowel.packPrice)} / уп. · арт. ${EXTRA_SUPPLIES.paperTowel.sku}`,
     ]),
   ].filter(Boolean);
 }
@@ -491,10 +590,63 @@ export function buildCoffeeItem(data) {
   return supplyCard({
     ...data.coffee,
     emoji: '☕',
-    amount: `${formatOne(data.coffee.buy / 1000)} кг`,
+    amount: `${formatNumber(data.coffee.packs)} кг`,
   }, [
-    `Орієнтир закладу: ${CHAMPS.coffeeKgRange} / 14 днів`,
-    `З меню ≈ ${formatOne(data.coffeeMenuKg)} кг · ${formatNumber(data.coffee.packs)} кг × ${formatMoney(data.coffee.packPrice)}`,
-    CHAMPS.coffee.note,
+    `Орієнтир закладу: ${CHAMPS.coffeeKgRange} / 14 днів · пакети по 1 кг, опт від 2 кг`,
+    `З меню ≈ ${formatOne(data.coffeeMenuKg)} кг · потрібно ${formatOne(data.coffee.needed / 1000)} кг`,
+    `${formatMoney(data.coffee.packPrice)} / кг · ${CHAMPS.coffee.note}`,
   ]);
+}
+
+export function buildWishlistItems(data) {
+  return [
+    supplyCard({
+      ...data.wishlist.trash60,
+      emoji: '🗑️',
+      amount: formatPackBuy(data.wishlist.trash60.packs, data.wishlist.trash60.buy, 'шт.'),
+    }, [
+      WISHLIST.trash60.note,
+      `${WISHLIST_USAGE.trash60PerWeek} шт. на тиждень · фасовка ${data.wishlist.trash60.pack} шт.`,
+      `${formatMoney(data.wishlist.trash60.packPrice)} / уп. · арт. ${WISHLIST.trash60.sku}`,
+    ]),
+    supplyCard({
+      ...data.wishlist.trash120,
+      emoji: '🗑️',
+      amount: formatPackBuy(data.wishlist.trash120.packs, data.wishlist.trash120.buy, 'шт.'),
+    }, [
+      WISHLIST.trash120.note,
+      `${WISHLIST_USAGE.trash120PerWeek} шт. на тиждень · фасовка ${data.wishlist.trash120.pack} шт.`,
+      `${formatMoney(data.wishlist.trash120.packPrice)} / уп. · арт. ${WISHLIST.trash120.sku}`,
+    ]),
+    supplyCard({
+      ...data.wishlist.matchaSet,
+      emoji: '🍵',
+      amount: formatPackBuy(
+        data.wishlist.matchaSet.packs,
+        null,
+        null,
+        'набір',
+        'набори',
+        'наборів',
+      ),
+    }, [
+      WISHLIST.matchaSet.note,
+      `Одноразово на заклад · ${formatMoney(data.wishlist.matchaSet.packPrice)} · код ${WISHLIST.matchaSet.sku}`,
+    ]),
+    supplyCard({
+      ...data.wishlist.towelHolder,
+      emoji: '📎',
+      amount: formatPackBuy(
+        data.wishlist.towelHolder.packs,
+        null,
+        null,
+        'холдер',
+        'холдери',
+        'холдерів',
+      ),
+    }, [
+      WISHLIST.towelHolder.note,
+      `Одноразово на бар · ${formatMoney(data.wishlist.towelHolder.packPrice)} · арт. ${WISHLIST.towelHolder.sku}`,
+    ]),
+  ].filter(Boolean);
 }

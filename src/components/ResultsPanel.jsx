@@ -1,5 +1,5 @@
 import { CHAMPS_URL, PETROVKA_URL } from '../data/supplies.js';
-import { buildCoffeeItem, buildExtraItems, buildResultGroups } from '../utils/calc.js';
+import { buildCoffeeItem, buildExtraItems, buildResultGroups, buildWishlistItems } from '../utils/calc.js';
 import { formatMoney } from '../utils/format.js';
 
 function ResultItem({ item }) {
@@ -29,7 +29,7 @@ export function ResultsPanel({ data }) {
   return (
     <article className="card results-card">
       <h2>Що закупити</h2>
-      <p className="intro">Кількості з запасом і округлені до фасовки. Кава в зернах — окремо в кінці сторінки.</p>
+      <p className="intro">Закупівля округлена вгору до фасовки, як продають Petrovka і 3 Champs. Кава в зернах — окремо в кінці.</p>
       <div>
         {groups.map((group) => (
           <section className="group" key={group.title}>
@@ -76,7 +76,7 @@ export function ExtraExpensesPanel({ data }) {
     <article className="card extra-card">
       <h2>Додаткові розходи</h2>
       <p className="intro">
-        Гігієна, клінінг і пакування їжі. Орієнтир на тиждень, окремо від напоїв вище. Ціни — Petrovka HoReCa.
+        Гігієна, клінінг і пакування їжі. Округлення до фасовки Petrovka, окремо від напоїв вище.
       </p>
       <section className="group">
         <div className="items">
@@ -88,7 +88,7 @@ export function ExtraExpensesPanel({ data }) {
           <div className="price-total extra-total">
             <div>
               <strong>Сума додаткових розходів</strong>
-              <p>Ганчірки, рукавички, хімія, пакування, мило і папір</p>
+              <p>Ганчірки, рукавички, хімія, вологі серветки, паперові рушники, пакування, мило і папір</p>
               <a href={PETROVKA_URL} target="_blank" rel="noreferrer">
                 Каталог Petrovka HoReCa
               </a>
@@ -110,7 +110,7 @@ export function CoffeePanel({ data }) {
     <article className="card extra-card coffee-card">
       <h2>Кава в зернах</h2>
       <p className="intro">
-        Окремо від розхідників. Закупівля 3 Champs: не менше орієнтира закладу на період.
+        Окремо від розхідників. Пакети по 1 кг, мінімум 2 кг, як продає 3 Champs.
       </p>
       <section className="group">
         <div className="items coffee-items">
@@ -135,6 +135,40 @@ export function CoffeePanel({ data }) {
               <p>Розхідники, додаткові розходи і кава в зернах на період</p>
             </div>
             <p className="amount">{formatMoney(data.combinedTotal)}</p>
+          </div>
+        ) : null}
+      </section>
+    </article>
+  );
+}
+
+export function WishlistPanel({ data }) {
+  const items = buildWishlistItems(data);
+
+  if (!items.length) return null;
+
+  return (
+    <article className="card extra-card wishlist-card">
+      <h2>Wish list</h2>
+      <p className="intro">
+        На майбутнє, не входить у суми вище. Ціна й кількість є, у розрахунок закупівлі не додаються.
+      </p>
+      <section className="group">
+        <div className="items">
+          {items.map((item) => (
+            <ResultItem key={item.title} item={item} />
+          ))}
+        </div>
+        {data.wishlistCost > 0 ? (
+          <div className="price-total wishlist-total">
+            <div>
+              <strong>Орієнтир wish list — не в сумі</strong>
+              <p>Пакети для сміття, набір для матчі і холдер для рушників на бар</p>
+              <a href={PETROVKA_URL} target="_blank" rel="noreferrer">
+                Каталог Petrovka HoReCa
+              </a>
+            </div>
+            <p className="amount">{formatMoney(data.wishlistCost)}</p>
           </div>
         ) : null}
       </section>

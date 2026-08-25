@@ -7,6 +7,8 @@ export const USAGE = {
   teaGPerCup: 3,
   carrier2Share: 0.18,
   carrier4Share: 0.04,
+  strawShare: 1,
+  maikaShare: 0.12,
   milk: {
     regular: 0.72,
     lactoseFree: 0.1,
@@ -26,6 +28,9 @@ export const EXTRA_USAGE = {
   dessertBoxPerDay: 8,
   toiletSoapLPerWeek: 0.5,
   toiletPaperRollsPerWeek: 4,
+  wetWipesPerWeek: 120,
+  cleaningWipesPerWeek: 120,
+  paperTowelPerWeek: 200,
 };
 
 export const CHAMPS = {
@@ -41,6 +46,7 @@ export const CHAMPS = {
     sku: 'Kenya 20 espresso',
     url: 'https://3champsroastery.com.ua/shop/keniya-20-espreso/',
     note: 'Опт від 2 кг, орієнтир 1 кг еспресо',
+    minPacks: 2,
   },
   matcha: {
     title: 'Матча Nanzan 3 Champs',
@@ -87,6 +93,22 @@ export const SUPPLIES = {
     unitPrice: 0.29,
     sku: '20007',
     url: 'https://petrovka-horeca.com.ua/uk/meshalka-derevyannayav-individualnoyupakovke-kraft-140h6h2-mm.html',
+  },
+  straw: {
+    title: 'Трубочка крафт в індивід. упаковці 200×6 мм',
+    pack: 50,
+    packPrice: 43.9,
+    unitPrice: 0.88,
+    sku: '20862',
+    url: 'https://petrovka-horeca.com.ua/uk/bumazhnaya-trubochka-v-ind-upak-kraft-50sht-20sm6mm.html',
+  },
+  maika: {
+    title: 'Пакет-майка 24×42 см, 6 мкм',
+    pack: 100,
+    packPrice: 48,
+    unitPrice: 0.48,
+    sku: '18265',
+    url: 'https://petrovka-horeca.com.ua/uk/p1357823657-paket-majka-bez.html',
   },
   sugar: {
     title: 'Цукор у стіках 5 г',
@@ -251,5 +273,76 @@ export const EXTRA_SUPPLIES = {
     sku: 'Grite Family 8',
     url: 'https://petrovka-horeca.com.ua/uk/bumaga-tualetnaya-grite-family-3-sloya-150-listov-up-8sht.html',
     note: '8 рулонів, 150 аркушів',
+  },
+  wetWipes: {
+    title: 'Серветки вологі Summer Fresh з клапаном 120 шт',
+    pack: 120,
+    packPrice: 47,
+    unitPrice: 0.39,
+    sku: '21037',
+    url: 'https://petrovka-horeca.com.ua/uk/salfetki-vlazhnye-summer-fresh-s-klapanom-120sht.html',
+    note: 'Велика пачка для рук і гостей',
+  },
+  cleaningWipes: {
+    title: 'Серветки вологі Summer Fresh Antibacterial 120 шт',
+    pack: 120,
+    packPrice: 47,
+    unitPrice: 0.39,
+    sku: '22254',
+    url: 'https://petrovka-horeca.com.ua/uk/salfetki-vlazhnye-summer-fresh-antibacterial-s-klapanom-120sht.html',
+    note: 'Велика пачка для прибирання поверхонь',
+  },
+  paperTowel: {
+    title: 'Рушник паперовий целюлоза 100% V-сл 21×21 см 200 шт',
+    pack: 200,
+    packPrice: 38,
+    unitPrice: 0.19,
+    sku: '21052',
+    url: 'https://petrovka-horeca.com.ua/uk/polotence-bumazhnoe-cellyuloza-100-v-skl-21h21sm-up-200sht.html',
+    note: 'Для бару, V-складання',
+  },
+};
+
+export const WISHLIST_USAGE = {
+  trash60PerWeek: 21,
+  trash120PerWeek: 7,
+};
+
+export const WISHLIST = {
+  trash60: {
+    title: 'Пакети для сміття 60 л, посилені',
+    pack: 40,
+    packPrice: 56,
+    unitPrice: 1.4,
+    sku: '19643',
+    url: 'https://petrovka-horeca.com.ua/uk/pakety-dlya-musora/',
+    note: 'Кухня і барна зона, 12 мкм',
+  },
+  trash120: {
+    title: 'Пакети для сміття 120 л',
+    pack: 25,
+    packPrice: 92.5,
+    unitPrice: 3.7,
+    sku: '102646',
+    url: 'https://petrovka-horeca.com.ua/uk/pakety-dlya-musora/',
+    note: 'Великий бак, 20 мкм',
+  },
+  matchaSet: {
+    title: 'Набір для матчі Olens Чабако, 3 предмети',
+    pack: 1,
+    packPrice: 941,
+    unitPrice: 941,
+    sku: '1005291',
+    url: 'https://coffeeok.com.ua/ua/product/nabor-dlja-prigotovlenija-matcha-olens-chabako-3-predmeta.html',
+    note: 'Чаван, часен і часаку. Порошок матчі вже в розхідниках 3 Champs',
+  },
+  towelHolder: {
+    title: 'Холдер для паперових рушників на бар, V-складання',
+    pack: 1,
+    packPrice: 684,
+    unitPrice: 684,
+    sku: '803362.W',
+    url: 'https://devisan.com.ua/dyspensery-ta-obladnannya/dyspenser-dlya-rushnykiv-v-ukladky-bilyj-tm-devisan/',
+    note: 'Білий ABS, місткість 200 аркушів — під рушники 21×21 см з розхідників',
   },
 };
