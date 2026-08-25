@@ -3,7 +3,7 @@ import { Controls } from './components/Controls.jsx';
 import { FooterBar } from './components/FooterBar.jsx';
 import { Hero } from './components/Hero.jsx';
 import { MenuPanel } from './components/MenuPanel.jsx';
-import { ResultsPanel } from './components/ResultsPanel.jsx';
+import { CoffeePanel, ExtraExpensesPanel, ResultsPanel } from './components/ResultsPanel.jsx';
 import { DEFAULT_CUPS_PER_DAY, MENU_ITEMS } from './data/constants.js';
 import { compute } from './utils/calc.js';
 import { parseCupsPerDay, parseDays, parseNonNegative } from './utils/format.js';
@@ -54,6 +54,8 @@ export default function App() {
         />
         <ResultsPanel data={data} />
       </section>
+      <ExtraExpensesPanel data={data} />
+      <CoffeePanel data={data} />
       <FooterBar />
     </main>
   );

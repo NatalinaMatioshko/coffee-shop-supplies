@@ -17,6 +17,17 @@ export const USAGE = {
   },
 };
 
+export const EXTRA_USAGE = {
+  clothsPerWeek: 10,
+  glovesPerWeek: 100,
+  sanitizerLPerWeek: 0.5,
+  dishSoapLPerWeek: 1,
+  kraftBagPerDay: 12,
+  dessertBoxPerDay: 8,
+  toiletSoapLPerWeek: 0.5,
+  toiletPaperRollsPerWeek: 4,
+};
+
 export const CHAMPS = {
   coffeeKgPer14Days: 34,
   coffeeKgRange: '33–35 кг',
@@ -156,5 +167,89 @@ export const SUPPLIES = {
     unitPrice: 0.159,
     sku: 'Alpro банан 1 л',
     url: 'https://petrovka-horeca.com.ua/uk/alpro/',
+  },
+};
+
+export const EXTRA_SUPPLIES = {
+  cloth: {
+    title: 'Ганчірки віскозні PROFIT 30×36 см',
+    pack: 10,
+    packPrice: 44,
+    unitPrice: 4.4,
+    sku: '20090',
+    url: 'https://petrovka-horeca.com.ua/uk/salfetki-viskoznye-profit-30h36-sm-10-sht.html',
+    note: 'Для столів і техніки, окремо від серветок гостям',
+  },
+  gloves: {
+    title: 'Рукавички нітрилові HOFFEN чорні L',
+    pack: 100,
+    packPrice: 220,
+    unitPrice: 2.2,
+    sku: '22357',
+    url: 'https://petrovka-horeca.com.ua/uk/perchatki-nitrilovye-teksturirovannye-hoffen-chernye-l-100sht.html',
+    note: 'Одноразові для бариста',
+  },
+  sanitizer: {
+    title: 'Антисептик для рук ProSept 1 л',
+    pack: 1,
+    packPrice: 252,
+    unitPrice: 252,
+    sku: '19316',
+    url: 'https://petrovka-horeca.com.ua/uk/p1525079899-antisepticheskij-gel-dlya.html',
+    note: 'Гель з дозатором',
+  },
+  dishSoap: {
+    title: 'Засіб для посуду OPTIMAL-PRO 5 л',
+    pack: 5,
+    packPrice: 320,
+    unitPrice: 64,
+    sku: '18569',
+    url: 'https://petrovka-horeca.com.ua/uk/p1406395192-sredstvo-dlya-mytya.html',
+    note: 'Без фосфатів, каністра 5 л',
+  },
+  kraftBag: {
+    title: 'Крафт-пакет з віконцем 310×90 мм',
+    pack: 100,
+    packPrice: 129,
+    unitPrice: 1.29,
+    sku: '103160F',
+    url: 'https://petrovka-horeca.com.ua/uk/p602207288-bumazhnyj-paket-prozrachnoj.html',
+    note: 'Для сендвічів і випічки',
+  },
+  dessertBox: {
+    title: 'Контейнер овальний крафт 1000 мл',
+    pack: 50,
+    packPrice: 290,
+    unitPrice: 5.8,
+    sku: '22623',
+    url: 'https://petrovka-horeca.com.ua/uk/konteyner-ovalniy-kraft-170h120h75mm-1000ml-50sht.html',
+    note: 'Для десертів і сендвічів',
+  },
+  dessertLid: {
+    title: 'Кришка для овального контейнера',
+    pack: 50,
+    packPrice: 140,
+    unitPrice: 2.8,
+    sku: '22642',
+    url: 'https://petrovka-horeca.com.ua/uk/kryshka-dlya-ovalnogo-konteynera-50sht.html',
+    note: 'Продається окремо від контейнера',
+  },
+  toiletSoap: {
+    title: 'Мило рідке Бджілка, квіткове, 5 л',
+    pack: 5,
+    packPrice: 258,
+    unitPrice: 51.6,
+    sku: '101721',
+    url: 'https://petrovka-horeca.com.ua/uk/sredstvo-dlya-mytya-posudy-pchelka-5l-limon-clone.html',
+    note: 'Для туалету гостей і персоналу',
+  },
+  toiletPaper: {
+    title: 'Туалетний папір Grite Family 3 шари',
+    pack: 8,
+    packPrice: 201,
+    unitPrice: 25.13,
+    sku: 'Grite Family 8',
+    url: 'https://petrovka-horeca.com.ua/uk/bumaga-tualetnaya-grite-family-3-sloya-150-listov-up-8sht.html',
+    note: '8 рулонів, 150 аркушів',
   },
 };

@@ -8,6 +8,8 @@ import {
 import {
   CHAMPS,
   CHAMPS_URL,
+  EXTRA_SUPPLIES,
+  EXTRA_USAGE,
   PETROVKA_URL,
   SUPPLIES,
   USAGE,
@@ -173,9 +175,25 @@ export function compute(rows, { days, reserve, takeaway }) {
 
   const cupsCost = pricedCups.reduce((sum, cup) => sum + cup.cost, 0);
   const lidsCost = pricedLids.reduce((sum, lid) => sum + lid.cost, 0);
-  const champsCost = coffee.cost + matcha.cost + tea.cost + milkCleaner.cost;
+  const coffeeCost = coffee.cost;
+  const champsCost = matcha.cost + tea.cost + milkCleaner.cost;
   const milkCost = milks.reduce((sum, item) => sum + item.cost, 0);
   const smallCost = napkin.cost + stirrer.cost + sugarItem.cost + sleeve.cost + carrier2.cost + carrier4.cost;
+  const grandTotal = cupsCost + lidsCost + champsCost + milkCost + smallCost;
+
+  const weeks = days / 7;
+  const extras = {
+    cloth: priced(EXTRA_USAGE.clothsPerWeek * weeks, EXTRA_SUPPLIES.cloth),
+    gloves: priced(EXTRA_USAGE.glovesPerWeek * weeks, EXTRA_SUPPLIES.gloves),
+    sanitizer: priced(EXTRA_USAGE.sanitizerLPerWeek * weeks, EXTRA_SUPPLIES.sanitizer),
+    dishSoap: priced(EXTRA_USAGE.dishSoapLPerWeek * weeks, EXTRA_SUPPLIES.dishSoap),
+    kraftBag: priced(EXTRA_USAGE.kraftBagPerDay * days, EXTRA_SUPPLIES.kraftBag),
+    dessertBox: priced(EXTRA_USAGE.dessertBoxPerDay * days, EXTRA_SUPPLIES.dessertBox),
+    dessertLid: priced(EXTRA_USAGE.dessertBoxPerDay * days, EXTRA_SUPPLIES.dessertLid),
+    toiletSoap: priced(EXTRA_USAGE.toiletSoapLPerWeek * weeks, EXTRA_SUPPLIES.toiletSoap),
+    toiletPaper: priced(EXTRA_USAGE.toiletPaperRollsPerWeek * weeks, EXTRA_SUPPLIES.toiletPaper),
+  };
+  const extraCost = Object.values(extras).reduce((sum, item) => sum + item.cost, 0);
 
   return {
     days,
@@ -201,10 +219,14 @@ export function compute(rows, { days, reserve, takeaway }) {
     sleeve,
     carrier2,
     carrier4,
+    coffeeCost,
     champsCost,
     milkCost,
     smallCost,
-    grandTotal: cupsCost + lidsCost + champsCost + milkCost + smallCost,
+    grandTotal,
+    extras,
+    extraCost,
+    combinedTotal: grandTotal + extraCost + coffeeCost,
   };
 }
 
@@ -241,15 +263,6 @@ export function buildResultGroups(data) {
     }));
 
   const champs = [
-    supplyCard({
-      ...data.coffee,
-      emoji: '☕',
-      amount: `${formatOne(data.coffee.buy / 1000)} кг`,
-    }, [
-      `Орієнтир закладу: ${CHAMPS.coffeeKgRange} / 14 днів`,
-      `З меню ≈ ${formatOne(data.coffeeMenuKg)} кг · ${formatNumber(data.coffee.packs)} кг × ${formatMoney(data.coffee.packPrice)}`,
-      CHAMPS.coffee.note,
-    ]),
     supplyCard({
       ...data.matcha,
       emoji: '🍵',
@@ -362,12 +375,12 @@ export function buildResultGroups(data) {
       } : null,
     },
     {
-      title: '3 Champs — кава, матча, чай, хімія',
+      title: '3 Champs — матча, чай, хімія',
       items: champs,
       total: data.champsCost > 0 ? {
-        label: 'Сума 3 Champs',
+        label: 'Сума 3 Champs без кави',
         amount: formatMoney(data.champsCost),
-        hint: 'Кава 33–35 кг, матча 180–280 г на 14 днів',
+        hint: 'Матча 180–280 г на 14 днів, чай і засіб для стімера. Кава в зернах — окремо в кінці',
         href: CHAMPS_URL,
         linkLabel: 'Відкрити 3champsroastery.com.ua',
       } : null,
@@ -395,4 +408,93 @@ export function buildResultGroups(data) {
       } : null,
     },
   ].filter((group) => group.items.length > 0);
+}
+
+export function buildExtraItems(data) {
+  return [
+    supplyCard({
+      ...data.extras.cloth,
+      emoji: '🧹',
+      amount: `${formatNumber(data.extras.cloth.buy)} шт.`,
+    }, [
+      EXTRA_SUPPLIES.cloth.note,
+      `${EXTRA_USAGE.clothsPerWeek} шт. на тиждень · ${formatNumber(data.extras.cloth.packs)} уп. по ${data.extras.cloth.pack}`,
+    ]),
+    supplyCard({
+      ...data.extras.gloves,
+      emoji: '🧤',
+      amount: `${formatNumber(data.extras.gloves.buy)} шт.`,
+    }, [
+      EXTRA_SUPPLIES.gloves.note,
+      `${EXTRA_USAGE.glovesPerWeek} шт. на тиждень · ${formatNumber(data.extras.gloves.packs)} уп. по ${data.extras.gloves.pack}`,
+    ]),
+    supplyCard({
+      ...data.extras.sanitizer,
+      emoji: '🧴',
+      amount: `${formatOne(data.extras.sanitizer.buy)} л`,
+    }, [
+      EXTRA_SUPPLIES.sanitizer.note,
+      `${formatOne(EXTRA_USAGE.sanitizerLPerWeek)} л на тиждень · ${formatNumber(data.extras.sanitizer.packs)} пл.`,
+    ]),
+    supplyCard({
+      ...data.extras.dishSoap,
+      emoji: '🫧',
+      amount: `${formatOne(data.extras.dishSoap.buy)} л`,
+    }, [
+      EXTRA_SUPPLIES.dishSoap.note,
+      `${formatOne(EXTRA_USAGE.dishSoapLPerWeek)} л на тиждень · ${formatNumber(data.extras.dishSoap.packs)} кан.`,
+    ]),
+    supplyCard({
+      ...data.extras.kraftBag,
+      emoji: '🛍️',
+      amount: `${formatNumber(data.extras.kraftBag.buy)} шт.`,
+    }, [
+      EXTRA_SUPPLIES.kraftBag.note,
+      `${EXTRA_USAGE.kraftBagPerDay} шт. на день · ${formatNumber(data.extras.kraftBag.packs)} уп. по ${data.extras.kraftBag.pack}`,
+    ]),
+    supplyCard({
+      ...data.extras.dessertBox,
+      emoji: '🍱',
+      amount: `${formatNumber(data.extras.dessertBox.buy)} шт.`,
+    }, [
+      EXTRA_SUPPLIES.dessertBox.note,
+      `${EXTRA_USAGE.dessertBoxPerDay} шт. на день · ${formatNumber(data.extras.dessertBox.packs)} уп. по ${data.extras.dessertBox.pack}`,
+    ]),
+    supplyCard({
+      ...data.extras.dessertLid,
+      emoji: '⭕',
+      amount: `${formatNumber(data.extras.dessertLid.buy)} шт.`,
+    }, [
+      EXTRA_SUPPLIES.dessertLid.note,
+      `По 1 кришці на контейнер · ${formatNumber(data.extras.dessertLid.packs)} уп. по ${data.extras.dessertLid.pack}`,
+    ]),
+    supplyCard({
+      ...data.extras.toiletSoap,
+      emoji: '🧼',
+      amount: `${formatOne(data.extras.toiletSoap.buy)} л`,
+    }, [
+      EXTRA_SUPPLIES.toiletSoap.note,
+      `${formatOne(EXTRA_USAGE.toiletSoapLPerWeek)} л на тиждень · ${formatNumber(data.extras.toiletSoap.packs)} бут. 5 л`,
+    ]),
+    supplyCard({
+      ...data.extras.toiletPaper,
+      emoji: '🧻',
+      amount: `${formatNumber(data.extras.toiletPaper.buy)} рул.`,
+    }, [
+      EXTRA_SUPPLIES.toiletPaper.note,
+      `${EXTRA_USAGE.toiletPaperRollsPerWeek} рулони на тиждень · ${formatNumber(data.extras.toiletPaper.packs)} уп. по ${data.extras.toiletPaper.pack}`,
+    ]),
+  ].filter(Boolean);
+}
+
+export function buildCoffeeItem(data) {
+  return supplyCard({
+    ...data.coffee,
+    emoji: '☕',
+    amount: `${formatOne(data.coffee.buy / 1000)} кг`,
+  }, [
+    `Орієнтир закладу: ${CHAMPS.coffeeKgRange} / 14 днів`,
+    `З меню ≈ ${formatOne(data.coffeeMenuKg)} кг · ${formatNumber(data.coffee.packs)} кг × ${formatMoney(data.coffee.packPrice)}`,
+    CHAMPS.coffee.note,
+  ]);
 }

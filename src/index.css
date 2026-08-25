@@ -77,6 +77,10 @@ h2 { font-size: 18px; margin: 0 0 6px; }
 .price-total p { margin: 4px 0 0; font-size: 12px; line-height: 1.45; color: rgba(255,255,255,.82); }
 .price-total a { color: #ffe7cb; font-size: 12px; }
 .price-total .amount { margin: 0; color: #fff; font-size: 26px; }
+.extra-card { margin-top: 18px; }
+.extra-card .items { grid-template-columns: repeat(3, 1fr); }
+.coffee-card .coffee-items { grid-template-columns: 1fr; max-width: 420px; }
+.price-total.extra-total { background: var(--green); }
 
 .footer-card { margin-top: 18px; padding: 17px 20px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
 .footer-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; max-width: 760px; }
@@ -87,6 +91,7 @@ button:hover { filter: brightness(1.08); }
   .hero, .footer-card { align-items: flex-start; flex-direction: column; }
   .control-panel { grid-template-columns: 1fr 1fr; }
   .dashboard { grid-template-columns: 1fr; }
+  .extra-card .items { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 560px) {
