@@ -1,9 +1,13 @@
+import { Icon } from './Icon.jsx';
 import { formatNumber, recipeLine } from '../utils/format.js';
 
 function MenuItem({ item, onDailyChange }) {
   return (
     <div className="menu-item">
-      <h3>{item.emoji} {item.name}</h3>
+      <h3>
+        <Icon name={item.icon} size={16} />
+        {item.name}
+      </h3>
       <p className="recipe">{recipeLine(item)}</p>
       <div className="menu-row">
         <div>

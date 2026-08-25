@@ -1,13 +1,14 @@
 import { CHAMPS_URL, PETROVKA_URL } from '../data/supplies.js';
 import { buildCoffeeItem, buildExtraItems, buildResultGroups, buildWishlistItems } from '../utils/calc.js';
 import { formatMoney } from '../utils/format.js';
+import { Icon } from './Icon.jsx';
 
 function ResultItem({ item }) {
   return (
     <article className="item">
       <div className="item-top">
         <h4>{item.title}</h4>
-        <span className="emoji">{item.emoji}</span>
+        <Icon name={item.icon} className="icon item-icon" />
       </div>
       <p className="amount">{item.amount}</p>
       {item.price ? <p className="item-price">{item.price}</p> : null}
@@ -117,7 +118,7 @@ export function CoffeePanel({ data }) {
           <ResultItem item={item} />
         </div>
         {data.coffeeCost > 0 ? (
-          <div className="price-total">
+          <div className="price-total coffee-total">
             <div>
               <strong>Сума за каву в зернах</strong>
               <p>{item.detail[0]}</p>
@@ -129,7 +130,7 @@ export function CoffeePanel({ data }) {
           </div>
         ) : null}
         {data.combinedTotal > 0 ? (
-          <div className="price-total">
+          <div className="price-total combined-total">
             <div>
               <strong>Разом усе</strong>
               <p>Розхідники, додаткові розходи і кава в зернах на період</p>

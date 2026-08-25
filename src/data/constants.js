@@ -94,29 +94,29 @@ function drink(item) {
 }
 
 export const MENU_ITEMS = [
-  drink({ id: 'espresso', name: 'Еспресо', emoji: '☕', cupSize: 110, coffeeG: 9, daily: 10 }),
-  drink({ id: 'doppio', name: 'Допіо', emoji: '☕', cupSize: 110, coffeeG: 18, daily: 5 }),
-  drink({ id: 'macchiato', name: 'Макіато', emoji: '🥛', cupSize: 110, coffeeG: 9, milkMl: 20, daily: 3 }),
-  drink({ id: 'ristretto', name: 'Рістрето', emoji: '☕', cupSize: 110, coffeeG: 7, daily: 2 }),
-  drink({ id: 'cortado', name: 'Кортадо', emoji: '🥛', cupSize: 110, coffeeG: 18, milkMl: 40, daily: 3 }),
+  drink({ id: 'espresso', name: 'Еспресо', icon: 'coffee', cupSize: 110, coffeeG: 9, daily: 10 }),
+  drink({ id: 'doppio', name: 'Допіо', icon: 'coffee', cupSize: 110, coffeeG: 18, daily: 5 }),
+  drink({ id: 'macchiato', name: 'Макіато', icon: 'milk', cupSize: 110, coffeeG: 9, milkMl: 20, daily: 3 }),
+  drink({ id: 'ristretto', name: 'Рістрето', icon: 'coffee', cupSize: 110, coffeeG: 7, daily: 2 }),
+  drink({ id: 'cortado', name: 'Кортадо', icon: 'milk', cupSize: 110, coffeeG: 18, milkMl: 40, daily: 3 }),
 
-  drink({ id: 'cappuccino', name: 'Капучино', emoji: '🥛', cupSize: 180, coffeeG: 18, milkMl: 120, daily: 18 }),
-  drink({ id: 'flatwhite', name: 'Флет-вайт', emoji: '🤎', cupSize: 180, coffeeG: 18, milkMl: 110, daily: 8 }),
-  drink({ id: 'filterSmall', name: 'Фільтр мал.', emoji: '🫖', cupSize: 180, coffeeG: 12, daily: 6 }),
-  drink({ id: 'americano', name: 'Американо', emoji: '🟤', cupSize: 180, coffeeG: 18, daily: 4 }),
-  drink({ id: 'moka', name: 'Мокачино', emoji: '🍫', cupSize: 180, coffeeG: 18, cocoaG: 10, milkMl: 100, daily: 2 }),
+  drink({ id: 'cappuccino', name: 'Капучино', icon: 'milk', cupSize: 180, coffeeG: 18, milkMl: 120, daily: 18 }),
+  drink({ id: 'flatwhite', name: 'Флет-вайт', icon: 'milk', cupSize: 180, coffeeG: 18, milkMl: 110, daily: 8 }),
+  drink({ id: 'filterSmall', name: 'Фільтр мал.', icon: 'funnel', cupSize: 180, coffeeG: 12, daily: 6 }),
+  drink({ id: 'americano', name: 'Американо', icon: 'coffee', cupSize: 180, coffeeG: 18, daily: 4 }),
+  drink({ id: 'moka', name: 'Мокачино', icon: 'cookie', cupSize: 180, coffeeG: 18, cocoaG: 10, milkMl: 100, daily: 2 }),
 
-  drink({ id: 'latte', name: 'Лате', emoji: '🥤', cupSize: 250, coffeeG: 18, milkMl: 180, daily: 12 }),
-  drink({ id: 'raf', name: 'Раф', emoji: '🥛', cupSize: 250, coffeeG: 18, milkMl: 180, daily: 4 }),
-  drink({ id: 'cocoaSmall', name: 'Какао мал.', emoji: '🍫', cupSize: 250, cocoaG: 20, milkMl: 200, daily: 3 }),
-  drink({ id: 'longBlack', name: 'Лонг блек', emoji: '🟤', cupSize: 250, coffeeG: 18, daily: 5 }),
-  drink({ id: 'filterMedium', name: 'Фільтр сер.', emoji: '🫖', cupSize: 250, coffeeG: 16, daily: 5 }),
+  drink({ id: 'latte', name: 'Лате', icon: 'cupSoda', cupSize: 250, coffeeG: 18, milkMl: 180, daily: 12 }),
+  drink({ id: 'raf', name: 'Раф', icon: 'milk', cupSize: 250, coffeeG: 18, milkMl: 180, daily: 4 }),
+  drink({ id: 'cocoaSmall', name: 'Какао мал.', icon: 'cookie', cupSize: 250, cocoaG: 20, milkMl: 200, daily: 3 }),
+  drink({ id: 'longBlack', name: 'Лонг блек', icon: 'coffee', cupSize: 250, coffeeG: 18, daily: 5 }),
+  drink({ id: 'filterMedium', name: 'Фільтр сер.', icon: 'funnel', cupSize: 250, coffeeG: 16, daily: 5 }),
 
-  drink({ id: 'cocoaLarge', name: 'Какао вел.', emoji: '🍫', cupSize: 340, cocoaG: 30, milkMl: 280, daily: 2 }),
-  drink({ id: 'filterLarge', name: 'Фільтр вел.', emoji: '🫖', cupSize: 340, coffeeG: 20, daily: 3 }),
-  drink({ id: 'tea', name: 'Чай', emoji: '🍵', cupSize: 340, teaBags: 1, daily: 4 }),
-  drink({ id: 'doubleCappuccino', name: 'Дабл капучино', emoji: '🥛', cupSize: 340, coffeeG: 18, milkMl: 250, daily: 3 }),
-  drink({ id: 'latteLarge', name: 'Лате вел.', emoji: '🥤', cupSize: 340, coffeeG: 18, milkMl: 260, daily: 5 }),
+  drink({ id: 'cocoaLarge', name: 'Какао вел.', icon: 'cookie', cupSize: 340, cocoaG: 30, milkMl: 280, daily: 2 }),
+  drink({ id: 'filterLarge', name: 'Фільтр вел.', icon: 'funnel', cupSize: 340, coffeeG: 20, daily: 3 }),
+  drink({ id: 'tea', name: 'Чай', icon: 'leaf', cupSize: 340, teaBags: 1, daily: 4 }),
+  drink({ id: 'doubleCappuccino', name: 'Дабл капучино', icon: 'milk', cupSize: 340, coffeeG: 18, milkMl: 250, daily: 3 }),
+  drink({ id: 'latteLarge', name: 'Лате вел.', icon: 'cupSoda', cupSize: 340, coffeeG: 18, milkMl: 260, daily: 5 }),
 ];
 
 export const DEFAULT_CUPS_PER_DAY = MENU_ITEMS.reduce((sum, item) => sum + item.daily, 0);

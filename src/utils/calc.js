@@ -57,7 +57,7 @@ function supplyCard(item, extraDetail = []) {
   if (!item || item.buy <= 0) return null;
   return {
     title: item.title,
-    emoji: item.emoji || '📦',
+    icon: item.icon || 'package',
     amount: item.amount,
     price: item.cost > 0 ? formatMoney(item.cost) : '',
     detail: extraDetail.filter(Boolean),
@@ -164,7 +164,7 @@ export function compute(rows, { days, reserve, takeaway }) {
   const teas = CHAMPS.teas.map((catalog) => ({
     ...priced(teaNeeded * teaShare, catalog),
     share: teaShare,
-    emoji: catalog.emoji,
+    icon: catalog.icon,
     note: catalog.note,
   }));
   const milkCleaner = priced(Math.max(1, Math.ceil(scale14)), CHAMPS.milkCleaner);
@@ -172,16 +172,16 @@ export function compute(rows, { days, reserve, takeaway }) {
 
   const milkNeeded = add(milkMl);
   const milks = [
-    { key: 'regular', share: USAGE.milk.regular, catalog: SUPPLIES.milkRegular, emoji: '🥛' },
-    { key: 'lactoseFree', share: USAGE.milk.lactoseFree, catalog: SUPPLIES.milkLactoseFree, emoji: '🥛' },
-    { key: 'oat', share: USAGE.milk.oat, catalog: SUPPLIES.milkOat, emoji: '🌾' },
-    { key: 'almond', share: USAGE.milk.almond, catalog: SUPPLIES.milkAlmond, emoji: '🌰' },
-    { key: 'coconut', share: USAGE.milk.coconut, catalog: SUPPLIES.milkCoconut, emoji: '🥥' },
-    { key: 'banana', share: USAGE.milk.banana, catalog: SUPPLIES.milkBanana, emoji: '🍌' },
+    { key: 'regular', share: USAGE.milk.regular, catalog: SUPPLIES.milkRegular, icon: 'milk' },
+    { key: 'lactoseFree', share: USAGE.milk.lactoseFree, catalog: SUPPLIES.milkLactoseFree, icon: 'milkOff' },
+    { key: 'oat', share: USAGE.milk.oat, catalog: SUPPLIES.milkOat, icon: 'wheat' },
+    { key: 'almond', share: USAGE.milk.almond, catalog: SUPPLIES.milkAlmond, icon: 'nut' },
+    { key: 'coconut', share: USAGE.milk.coconut, catalog: SUPPLIES.milkCoconut, icon: 'nut' },
+    { key: 'banana', share: USAGE.milk.banana, catalog: SUPPLIES.milkBanana, icon: 'banana' },
   ].map((entry) => ({
     ...priced(milkNeeded * entry.share, entry.catalog),
     share: entry.share,
-    emoji: entry.emoji,
+    icon: entry.icon,
   }));
 
   const napkin = priced(add(napkins), SUPPLIES.napkin);
@@ -230,7 +230,7 @@ export function compute(rows, { days, reserve, takeaway }) {
   };
   const wishlistTeas = WISHLIST.teas.map((catalog) => ({
     ...priced(catalog.pack, catalog),
-    emoji: catalog.emoji,
+    icon: catalog.icon,
     note: catalog.note,
   }));
   const wishlistCost = Object.values(wishlist).reduce((sum, item) => sum + item.cost, 0)
@@ -284,7 +284,7 @@ export function buildResultGroups(data) {
     .filter((cup) => cup.buy > 0)
     .map((cup) => ({
       title: `Стакан ${cup.size} мл`,
-      emoji: '🥤',
+      icon: 'cupSoda',
       amount: formatPackBuy(cup.packs, cup.buy, 'шт.'),
       price: cup.cost > 0 ? formatMoney(cup.cost) : '',
       detail: [
@@ -299,7 +299,7 @@ export function buildResultGroups(data) {
     .filter((lid) => lid.buy > 0)
     .map((lid) => ({
       title: `${lid.title} · ${lid.forCups}`,
-      emoji: '🔘',
+      icon: 'circleDot',
       amount: formatPackBuy(lid.packs, lid.buy, 'шт.'),
       price: lid.cost > 0 ? formatMoney(lid.cost) : '',
       detail: [
@@ -312,7 +312,7 @@ export function buildResultGroups(data) {
   const champs = [
     supplyCard({
       ...data.matcha,
-      emoji: '🍵',
+      icon: 'leaf',
       amount: formatPackBuy(data.matcha.packs, data.matcha.buy, 'г'),
     }, [
       `Орієнтир закладу: ${CHAMPS.matchaGRange} / 14 днів`,
@@ -329,7 +329,7 @@ export function buildResultGroups(data) {
     ])),
     supplyCard({
       ...data.milkCleaner,
-      emoji: '🧴',
+      icon: 'droplets',
       amount: formatPackBuy(
         data.milkCleaner.packs,
         null,
@@ -344,7 +344,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.groupCleaner,
-      emoji: '🧪',
+      icon: 'flaskConical',
       amount: formatPackBuy(
         data.groupCleaner.packs,
         null,
@@ -373,7 +373,7 @@ export function buildResultGroups(data) {
   const small = [
     supplyCard({
       ...data.sleeve,
-      emoji: '🧣',
+      icon: 'shirt',
       amount: formatPackBuy(data.sleeve.packs, data.sleeve.buy, 'шт.'),
     }, [
       'Лише гарячі takeaway, без стаканів 110 мл',
@@ -381,7 +381,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.napkin,
-      emoji: '🤍',
+      icon: 'layers',
       amount: formatPackBuy(data.napkin.packs, data.napkin.buy, 'шт.'),
     }, [
       `${USAGE.napkinPerDrink} на напій`,
@@ -389,7 +389,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.stirrer,
-      emoji: '🪵',
+      icon: 'utensils',
       amount: formatPackBuy(data.stirrer.packs, data.stirrer.buy, 'шт.'),
     }, [
       'Гарячі takeaway',
@@ -397,7 +397,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.straw,
-      emoji: '🥤',
+      icon: 'cylinder',
       amount: formatPackBuy(data.straw.packs, data.straw.buy, 'шт.'),
     }, [
       'Takeaway без стаканів 110 мл, індивід. упаковка',
@@ -405,7 +405,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.maika,
-      emoji: '🛍️',
+      icon: 'shoppingBag',
       amount: formatPackBuy(data.maika.packs, data.maika.buy, 'шт.'),
     }, [
       `${Math.round(USAGE.maikaShare * 100)}% takeaway — пакет-майка на кілька позицій`,
@@ -413,7 +413,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.sugar,
-      emoji: '🍬',
+      icon: 'candy',
       amount: formatPackBuy(data.sugar.packs, data.sugar.buy, 'шт.'),
     }, [
       `${Math.round(USAGE.sugarShare * 100)}% напоїв, стіки 5 г`,
@@ -421,7 +421,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.carrier2,
-      emoji: '📦',
+      icon: 'package',
       amount: formatPackBuy(data.carrier2.packs, data.carrier2.buy, 'шт.'),
     }, [
       `${Math.round(USAGE.carrier2Share * 100)}% takeaway як замовлення на 2`,
@@ -429,7 +429,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.carrier4,
-      emoji: '📦',
+      icon: 'package',
       amount: formatPackBuy(data.carrier4.packs, data.carrier4.buy, 'шт.'),
     }, [
       `${Math.round(USAGE.carrier4Share * 100)}% takeaway як замовлення на 4`,
@@ -500,7 +500,7 @@ export function buildExtraItems(data) {
   return [
     supplyCard({
       ...data.extras.cloth,
-      emoji: '🧹',
+      icon: 'paintbrush',
       amount: formatPackBuy(data.extras.cloth.packs, data.extras.cloth.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.cloth.note,
@@ -508,7 +508,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.gloves,
-      emoji: '🧤',
+      icon: 'hand',
       amount: formatPackBuy(data.extras.gloves.packs, data.extras.gloves.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.gloves.note,
@@ -516,7 +516,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.sanitizer,
-      emoji: '🧴',
+      icon: 'sprayCan',
       amount: formatPackBuy(
         data.extras.sanitizer.packs,
         data.extras.sanitizer.buy,
@@ -531,7 +531,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.dishSoap,
-      emoji: '🫧',
+      icon: 'bath',
       amount: formatPackBuy(
         data.extras.dishSoap.packs,
         data.extras.dishSoap.buy,
@@ -546,7 +546,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.kraftBag,
-      emoji: '🛍️',
+      icon: 'shoppingBag',
       amount: formatPackBuy(data.extras.kraftBag.packs, data.extras.kraftBag.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.kraftBag.note,
@@ -554,7 +554,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.dessertBox,
-      emoji: '🍱',
+      icon: 'box',
       amount: formatPackBuy(data.extras.dessertBox.packs, data.extras.dessertBox.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.dessertBox.note,
@@ -562,7 +562,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.dessertLid,
-      emoji: '⭕',
+      icon: 'circle',
       amount: formatPackBuy(data.extras.dessertLid.packs, data.extras.dessertLid.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.dessertLid.note,
@@ -570,7 +570,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.toiletSoap,
-      emoji: '🧼',
+      icon: 'droplets',
       amount: formatPackBuy(
         data.extras.toiletSoap.packs,
         data.extras.toiletSoap.buy,
@@ -585,7 +585,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.toiletPaper,
-      emoji: '🧻',
+      icon: 'scrollText',
       amount: formatPackBuy(data.extras.toiletPaper.packs, data.extras.toiletPaper.buy, 'рул.'),
     }, [
       EXTRA_SUPPLIES.toiletPaper.note,
@@ -593,7 +593,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.wetWipes,
-      emoji: '💧',
+      icon: 'droplet',
       amount: formatPackBuy(data.extras.wetWipes.packs, data.extras.wetWipes.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.wetWipes.note,
@@ -602,7 +602,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.cleaningWipes,
-      emoji: '🧽',
+      icon: 'sparkles',
       amount: formatPackBuy(data.extras.cleaningWipes.packs, data.extras.cleaningWipes.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.cleaningWipes.note,
@@ -611,7 +611,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.paperTowel,
-      emoji: '🧻',
+      icon: 'scrollText',
       amount: formatPackBuy(data.extras.paperTowel.packs, data.extras.paperTowel.buy, 'шт.'),
     }, [
       EXTRA_SUPPLIES.paperTowel.note,
@@ -624,7 +624,7 @@ export function buildExtraItems(data) {
 export function buildCoffeeItem(data) {
   return supplyCard({
     ...data.coffee,
-    emoji: '☕',
+    icon: 'bean',
     amount: `${formatNumber(data.coffee.packs)} кг`,
   }, [
     `Орієнтир закладу: ${CHAMPS.coffeeKgRange} / 14 днів · пакети по 1 кг, опт від 2 кг`,
@@ -637,7 +637,7 @@ export function buildWishlistItems(data) {
   return [
     supplyCard({
       ...data.wishlist.trash60,
-      emoji: '🗑️',
+      icon: 'trash2',
       amount: formatPackBuy(data.wishlist.trash60.packs, data.wishlist.trash60.buy, 'шт.'),
     }, [
       WISHLIST.trash60.note,
@@ -646,7 +646,7 @@ export function buildWishlistItems(data) {
     ]),
     supplyCard({
       ...data.wishlist.trash120,
-      emoji: '🗑️',
+      icon: 'trash2',
       amount: formatPackBuy(data.wishlist.trash120.packs, data.wishlist.trash120.buy, 'шт.'),
     }, [
       WISHLIST.trash120.note,
@@ -655,7 +655,7 @@ export function buildWishlistItems(data) {
     ]),
     supplyCard({
       ...data.wishlist.matchaSet,
-      emoji: '🍵',
+      icon: 'leaf',
       amount: formatPackBuy(
         data.wishlist.matchaSet.packs,
         null,
@@ -670,7 +670,7 @@ export function buildWishlistItems(data) {
     ]),
     supplyCard({
       ...data.wishlist.matchaSieve,
-      emoji: '🕸️',
+      icon: 'funnel',
       amount: formatPackBuy(
         data.wishlist.matchaSieve.packs,
         null,
@@ -685,7 +685,7 @@ export function buildWishlistItems(data) {
     ]),
     supplyCard({
       ...data.wishlist.towelHolder,
-      emoji: '📎',
+      icon: 'paperclip',
       amount: formatPackBuy(
         data.wishlist.towelHolder.packs,
         null,

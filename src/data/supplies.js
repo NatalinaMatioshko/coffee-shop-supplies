@@ -67,7 +67,7 @@ export const CHAMPS = {
       sku: 'sonyachna-keniya',
       url: 'https://3champsroastery.com.ua/shop/sonyachna-keniya/',
       note: 'Кенійський чорний чай. Є також 70 г',
-      emoji: '☀️',
+      icon: 'sun',
     },
     {
       key: 'sencha',
@@ -78,7 +78,7 @@ export const CHAMPS = {
       sku: 'sencha-klasichna',
       url: 'https://3champsroastery.com.ua/shop/sencha-klasichna/',
       note: 'Трав’янисті та легкі фруктові ноти',
-      emoji: '🌿',
+      icon: 'leaf',
     },
     {
       key: 'milkOolong',
@@ -89,7 +89,7 @@ export const CHAMPS = {
       sku: 'molochniy-ulun',
       url: 'https://3champsroastery.com.ua/shop/molochniy-ulun/',
       note: 'М’який настій, солодке молоко і жасмин',
-      emoji: '🥛',
+      icon: 'milk',
     },
     {
       key: 'masala',
@@ -100,7 +100,7 @@ export const CHAMPS = {
       sku: 'masala',
       url: 'https://3champsroastery.com.ua/shop/masala/',
       note: 'Насичений смак з теплими пікантними нотками',
-      emoji: '🌶️',
+      icon: 'flame',
     },
   ],
   milkCleaner: {
@@ -410,7 +410,7 @@ export const WISHLIST = {
       sku: 'grechaniy-chay',
       url: 'https://3champsroastery.com.ua/shop/grechaniy-chay/',
       note: 'Смажене насіння чорної гречихи з Китаю',
-      emoji: '🌾',
+      icon: 'wheat',
     },
     {
       key: 'daHongPao',
@@ -421,7 +421,7 @@ export const WISHLIST = {
       sku: 'da-hun-pao',
       url: 'https://3champsroastery.com.ua/shop/da-hun-pao/',
       note: 'Димний цитрус і фруктово-пряний післясмак',
-      emoji: '🪨',
+      icon: 'mountain',
     },
     {
       key: 'tieGuanYin',
@@ -432,7 +432,7 @@ export const WISHLIST = {
       sku: 'te-guan-in',
       url: 'https://3champsroastery.com.ua/shop/te-guan-in/',
       note: 'Тонкий насичений бузковий аромат',
-      emoji: '💜',
+      icon: 'flower2',
     },
     {
       key: 'bergamot',
@@ -443,7 +443,7 @@ export const WISHLIST = {
       sku: 'sitsiliyskiy-be',
       url: 'https://3champsroastery.com.ua/shop/sitsiliyskiy-be/',
       note: 'Канді, глибокий смак з терпкістю. Є також 70 г',
-      emoji: '🍋',
+      icon: 'citrus',
     },
     {
       key: 'grannyJam',
@@ -454,7 +454,7 @@ export const WISHLIST = {
       sku: 'babusine-varennya',
       url: 'https://3champsroastery.com.ua/shop/babusine-varennya/',
       note: 'Суданська троянда, ягоди й трави. Є також 70 г',
-      emoji: '🍓',
+      icon: 'cherry',
     },
     {
       key: 'cascara',
@@ -465,7 +465,7 @@ export const WISHLIST = {
       sku: '18204135050',
       url: 'https://3champsroastery.com.ua/shop/kaskara/',
       note: 'Сушена кавова вишня: шипшина, вишня, каркаде',
-      emoji: '🍒',
+      icon: 'cherry',
     },
     {
       key: 'dzen',
@@ -476,7 +476,7 @@ export const WISHLIST = {
       sku: 'ukrainskiy-dzen',
       url: 'https://3champsroastery.com.ua/shop/ukrainskiy-dzen/',
       note: 'Смородина, чебрець і мате. Є також 70 г',
-      emoji: '🍃',
+      icon: 'sprout',
     },
   ],
 };
