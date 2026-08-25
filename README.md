@@ -1,59 +1,54 @@
-# Розхідники кав’ярні
+# Coffee Shop Supplies
 
-Калькулятор закупівлі на період (зазвичай **14 днів**): стакани, кришки, кава, молоко, чай, матча й дрібні розхідники. Кількості округлюються до фасовки постачальника, з запасом на брак.
+A procurement calculator for a café opening order. It turns a drink menu into a two-week shopping list — cups, lids, coffee, milk, and small goods — with pack sizes and prices from real Ukrainian suppliers.
 
-**Жива версія:** [natalinamatioshko.github.io/coffee-shop-supplies](https://natalinamatioshko.github.io/coffee-shop-supplies/)
+**[Live demo](https://natalinamatioshko.github.io/coffee-shop-supplies/)** · [GitHub](https://github.com/NatalinaMatioshko/coffee-shop-supplies)
 
-## Що рахує
+## The problem
 
-- **Стакани** — двошарові крафт 110 / 180 / 250 / 340 мл ([Petrovka HoReCa](https://petrovka-horeca.com.ua/uk/stakany-bumazhnye-dvuhsloynye-kraft/)). Лише takeaway; у залі — кераміка.
-- **Кришки** — R-71, R-79, R-80. Для 110 мл кришок немає.
-- **3 Champs** — кава (орієнтир 33–35 кг / 2 тижні), матча (180–280 г), чай, засіб для молочних систем. Сайт: [3champsroastery.com.ua](https://3champsroastery.com.ua/).
-- **Молоко** — звичайне, безлактозне, вівсяне, мигдалеве, кокосове, бананове.
-- **Дрібниця** — серветки, мішалки, цукор у стіках, манжети (гарячі takeaway, без 110 мл), тримачі на 2 і на 4 стакани.
+Opening a coffee shop means guessing how much to buy before the first sale. Cups come in four sizes, lids do not match 1:1, takeaway is not 100% of drinks, and suppliers sell in packs of 15, 30, or 50 — not “exactly what the recipe needs.”
 
-Меню згруповане за розміром стакана:
+This app is a working tool for that first order: change daily portions, and the purchase list updates with a safety reserve and a total in UAH.
 
-| Стакан | Напої |
+## What it does
+
+- **Menu → cups by size.** Drinks are grouped by cup (110 / 180 / 250 / 340 ml). Only takeaway drinks count toward disposable cups; dine-in is assumed to use ceramic.
+- **Lids that actually fit.** 110 ml has no lid. 180 / 250 / 340 ml map to Petrovka models R-71, R-79, and R-80 — not a generic “one lid per cup.”
+- **Supplier math.** Quantities round up to real pack sizes. Line totals and a grand total use listed prices from [Petrovka HoReCa](https://petrovka-horeca.com.ua/) (cups, lids, milk, napkins, stirrers, sleeves, carriers) and [3 Champs Roastery](https://3champsroastery.com.ua/) (coffee, matcha, tea, milk-system cleaner).
+- **Milk mix.** Cow’s milk, lactose-free, oat, almond, coconut, and banana are split by configurable shares of the recipe milk volume.
+- **Hot-only extras.** Sleeves apply to hot takeaway only (not 110 ml). Two-cup and four-cup carriers are estimated from takeaway volume.
+
+Controls: period (default 14 days), waste reserve (10–20%), takeaway share, and a daily-drinks check against the menu sum.
+
+## Design choices
+
+| Decision | Why |
 | --- | --- |
-| 110 мл | Еспресо, допіо, макіато |
-| 180 мл | Капучино, флет-вайт, фільтр мал. |
-| 250 мл | Лате, раф, какао мал., лонг блек, фільтр сер. |
-| 340 мл | Какао вел., фільтр вел., чай, дабл капучино, лате вел. |
+| Data catalogs, not a backend | Prices and recipes live in `src/data/` so the shop can edit them without a CMS |
+| Recipe grams/ml per drink | Coffee and milk scale from the menu instead of a single “drinks × constant” |
+| Pack rounding after reserve | Matches how you actually order: 15% extra, then buy whole packs |
+| GitHub Pages | Static React app, no server; every push to `main` deploys |
 
-## Запуск локально
+Prices in the repo are a snapshot from supplier sites. They should be updated when the price list changes.
 
-Потрібні Node.js 22+ і npm.
+## Stack
+
+React 19 · Vite 7 · GitHub Actions → GitHub Pages
+
+Logic is separated from UI: `src/utils/calc.js` computes the order; `src/components/` only renders it.
+
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Відкрийте адресу, яку покаже Vite (зазвичай `http://127.0.0.1:5173/`).
+Then open the URL Vite prints (usually `http://127.0.0.1:5173/`).
 
 ```bash
-npm run build    # збірка в dist/
-npm run preview  # перевірка збірки
+npm run build
+npm run preview
 ```
 
-## Як підлаштувати під заклад
-
-| Файл | Що змінювати |
-| --- | --- |
-| `src/data/constants.js` | Меню, рецепти (грами кави, мл молока), ціни стаканів і кришок |
-| `src/data/supplies.js` | Ціни розхідників, частки молока, норми серветок/цукру/тримачів, кг кави 3 Champs |
-
-Порції на день змінюються в інтерфейсі. Після першого тижня підставте реальні продажі й перерахуйте.
-
-Ціни в коді — знімок з сайтів постачальників. Якщо прайс оновився, змініть `packPrice` у відповідному каталозі.
-
-## Деплой
-
-Сайт збирається GitHub Actions і публікується на GitHub Pages при пуші в `main`.
-
-У репозиторії: **Settings → Pages → Source: GitHub Actions**.
-
-## Стек
-
-React 19, Vite 7.
+Edit drinks and cup/lid SKUs in `src/data/constants.js`. Edit milk shares, coffee kilograms, and other supply prices in `src/data/supplies.js`.
