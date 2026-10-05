@@ -34,18 +34,26 @@ export const EXTRA_USAGE = {
 };
 
 export const CHAMPS = {
-  coffeeKgPer14Days: 34,
-  coffeeKgRange: '33–35 кг',
   matchaGPer14Days: 230,
   matchaGRange: '180–280 г',
-  coffee: {
-    title: 'Кава 3 Champs, зерно 1 кг',
+  espressoCoffee: {
+    title: 'Кава під еспресо 3 Champs, зерно 1 кг',
     pack: 1000,
     packPrice: 1050,
     unitPrice: 1.05,
     sku: 'Kenya 20 espresso',
     url: 'https://3champsroastery.com.ua/shop/keniya-20-espreso/',
-    note: 'Опт від 2 кг, орієнтир 1 кг еспресо',
+    note: 'Опт від 2 кг · бленд або 2–3 лоти',
+    minPacks: 2,
+  },
+  filterCoffee: {
+    title: 'Кава під фільтр 3 Champs, зерно 1 кг',
+    pack: 1000,
+    packPrice: 1420,
+    unitPrice: 1.42,
+    sku: 'Kenya 20 filter',
+    url: 'https://3champsroastery.com.ua/shop/keniya-20-filtr/',
+    note: 'Опт від 2 кг · світлі лоти, орієнтир 1 кг',
     minPacks: 2,
   },
   matcha: {

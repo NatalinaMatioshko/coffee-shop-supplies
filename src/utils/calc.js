@@ -67,7 +67,8 @@ function supplyCard(item, extraDetail = []) {
 export function compute(rows, { days, reserve, takeaway }) {
   const cups = {};
   const lids = {};
-  let coffeeFromMenuG = 0;
+  let espressoFromMenuG = 0;
+  let filterFromMenuG = 0;
   let milkMl = 0;
   let teaCups = 0;
   let napkins = 0;
@@ -81,7 +82,11 @@ export function compute(rows, { days, reserve, takeaway }) {
   rows.forEach((row) => {
     const takeawayQty = row.total * takeaway;
     takeawayDrinks += takeawayQty;
-    coffeeFromMenuG += (row.coffeeG || 0) * row.total;
+    if (row.coffeeKind === 'filter') {
+      filterFromMenuG += (row.coffeeG || 0) * row.total;
+    } else if (row.coffeeKind === 'espresso') {
+      espressoFromMenuG += (row.coffeeG || 0) * row.total;
+    }
     milkMl += (row.milkMl || 0) * row.total;
     teaCups += (row.teaBags || 0) * row.total;
     napkins += row.total * USAGE.napkinPerDrink;
@@ -154,9 +159,18 @@ export function compute(rows, { days, reserve, takeaway }) {
     })
     .sort((a, b) => (a.diameter ?? 0) - (b.diameter ?? 0));
 
-  const coffeeMenuKg = add(coffeeFromMenuG) / 1000;
-  const coffeePlanKg = CHAMPS.coffeeKgPer14Days * scale14;
-  const coffee = priced(Math.max(coffeeMenuKg, coffeePlanKg) * 1000, CHAMPS.coffee);
+  const espressoDaily = rows.reduce((sum, row) => (
+    sum + (row.coffeeKind === 'espresso' ? row.daily : 0)
+  ), 0);
+  const filterDaily = rows.reduce((sum, row) => (
+    sum + (row.coffeeKind === 'filter' ? row.daily : 0)
+  ), 0);
+  const otherDaily = totalDaily - espressoDaily - filterDaily;
+
+  const espressoMenuKg = add(espressoFromMenuG) / 1000;
+  const filterMenuKg = add(filterFromMenuG) / 1000;
+  const coffeeEspresso = priced(espressoMenuKg * 1000, CHAMPS.espressoCoffee);
+  const coffeeFilter = priced(filterMenuKg * 1000, CHAMPS.filterCoffee);
 
   const matcha = priced(CHAMPS.matchaGPer14Days * scale14, CHAMPS.matcha);
   const teaNeeded = add(teaCups * USAGE.teaGPerCup);
@@ -195,7 +209,7 @@ export function compute(rows, { days, reserve, takeaway }) {
 
   const cupsCost = pricedCups.reduce((sum, cup) => sum + cup.cost, 0);
   const lidsCost = pricedLids.reduce((sum, lid) => sum + lid.cost, 0);
-  const coffeeCost = coffee.cost;
+  const coffeeCost = coffeeEspresso.cost + coffeeFilter.cost;
   const champsCost = matcha.cost
     + teas.reduce((sum, item) => sum + item.cost, 0)
     + milkCleaner.cost
@@ -248,8 +262,15 @@ export function compute(rows, { days, reserve, takeaway }) {
     cupsCost,
     lids: pricedLids,
     lidsCost,
-    coffee,
-    coffeeMenuKg,
+    coffeeEspresso,
+    coffeeFilter,
+    espressoFromMenuG,
+    filterFromMenuG,
+    espressoMenuKg,
+    filterMenuKg,
+    espressoDaily,
+    filterDaily,
+    otherDaily,
     matcha,
     teas,
     milkCleaner,
@@ -621,16 +642,28 @@ export function buildExtraItems(data) {
   ].filter(Boolean);
 }
 
-export function buildCoffeeItem(data) {
-  return supplyCard({
-    ...data.coffee,
-    icon: 'bean',
-    amount: `${formatNumber(data.coffee.packs)} кг`,
-  }, [
-    `Орієнтир закладу: ${CHAMPS.coffeeKgRange} / 14 днів · пакети по 1 кг, опт від 2 кг`,
-    `З меню ≈ ${formatOne(data.coffeeMenuKg)} кг · потрібно ${formatOne(data.coffee.needed / 1000)} кг`,
-    `${formatMoney(data.coffee.packPrice)} / кг · ${CHAMPS.coffee.note}`,
-  ]);
+export function buildCoffeeItems(data) {
+  const reservePct = Math.round(data.reserve * 100);
+  return [
+    supplyCard({
+      ...data.coffeeEspresso,
+      icon: 'bean',
+      amount: `${formatOne(data.coffeeEspresso.buy / 1000)} кг`,
+    }, [
+      'Капучино, лате, флет-вайт, оксамит, еспресо, допіо, лонг блек',
+      `${formatNumber(data.espressoDaily)} ${plural(data.espressoDaily, 'чашка', 'чашки', 'чашок')}/день · з меню ${formatOne(data.espressoFromMenuG / 1000)} кг · запас ${reservePct}% ≈ ${formatOne(data.espressoMenuKg)} кг`,
+      `${formatMoney(data.coffeeEspresso.packPrice)} / кг · ${CHAMPS.espressoCoffee.note}`,
+    ]),
+    supplyCard({
+      ...data.coffeeFilter,
+      icon: 'funnel',
+      amount: `${formatOne(data.coffeeFilter.buy / 1000)} кг`,
+    }, [
+      'Фільтр 200 / 300 / 400 мл',
+      `${formatNumber(data.filterDaily)} ${plural(data.filterDaily, 'чашка', 'чашки', 'чашок')}/день · з меню ${formatOne(data.filterFromMenuG / 1000)} кг · запас ${reservePct}% ≈ ${formatOne(data.filterMenuKg)} кг`,
+      `${formatMoney(data.coffeeFilter.packPrice)} / кг · ${CHAMPS.filterCoffee.note}`,
+    ]),
+  ].filter(Boolean);
 }
 
 export function buildWishlistItems(data) {

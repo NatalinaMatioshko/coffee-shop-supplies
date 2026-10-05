@@ -89,7 +89,12 @@ h2 { font-size: 18px; margin: 0 0 6px; }
 .price-total .amount { margin: 0; color: #fff; font-size: 26px; }
 .extra-card { margin-top: 18px; }
 .extra-card .items { grid-template-columns: repeat(3, 1fr); }
-.coffee-card .coffee-items { grid-template-columns: 1fr; max-width: 420px; }
+.coffee-card .coffee-items { grid-template-columns: 1fr 1fr; }
+.forecast-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0 0 12px; }
+.forecast-item { background: #e9ebe4; border-radius: 12px; padding: 12px 14px; }
+.forecast-item strong { display: block; font-size: 14px; }
+.forecast-item span { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.forecast-note { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0 0 16px; }
 .price-total.extra-total { background: var(--teal); }
 .price-total.coffee-total { background: var(--stone); }
 .price-total.combined-total { background: var(--pine); }
@@ -108,11 +113,12 @@ button:hover { filter: brightness(1.08); }
   .menu-card .menu-row { grid-template-columns: 1fr 1fr; }
   .results-card .items,
   .extra-card .items { grid-template-columns: repeat(2, 1fr); }
+  .forecast-grid { grid-template-columns: 1fr 1fr 1fr; }
 }
 
 @media (max-width: 560px) {
   .wrap { padding: 24px 12px 36px; }
-  .control-panel, .menu-groups, .menu-grid, .items { grid-template-columns: 1fr; }
+  .control-panel, .menu-groups, .menu-grid, .items, .forecast-grid { grid-template-columns: 1fr; }
   .menu-card .menu-row { grid-template-columns: 1fr 1fr; }
   .card { padding: 16px; }
   .price-total { flex-direction: column; align-items: flex-start; }

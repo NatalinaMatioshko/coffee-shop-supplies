@@ -37,12 +37,19 @@ export function formatPackBuy(
 
 export function recipeLine(item) {
   const parts = [];
-  if (item.coffeeG) parts.push(`${item.coffeeG} г кави`);
+  if (item.coffeeG) {
+    const kind = item.coffeeKind === 'filter' ? 'фільтр' : 'еспресо';
+    parts.push(`${item.coffeeG} г кави (${kind})`);
+  }
   if (item.milkMl) parts.push(`${item.milkMl} мл молока`);
   if (item.matchaG) parts.push(`${item.matchaG} г матчі`);
   if (item.cocoaG) parts.push(`${item.cocoaG} г какао`);
   if (item.teaBags) parts.push(`${item.teaBags} пакетик чаю`);
-  parts.push(`стакан ${item.cupSize} мл`);
+  if (item.servingMl && item.servingMl !== item.cupSize) {
+    parts.push(`напій ${item.servingMl} мл · стакан ${item.cupSize} мл`);
+  } else {
+    parts.push(`стакан ${item.cupSize} мл`);
+  }
   return parts.join(' · ');
 }
 

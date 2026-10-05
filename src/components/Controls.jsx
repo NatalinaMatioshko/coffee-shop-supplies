@@ -62,7 +62,7 @@ export function Controls({
           value={cupsPerDay}
           onChange={(event) => onCupsPerDayChange(event.target.value)}
         />
-        <p className="hint">Орієнтир для перевірки меню</p>
+        <p className="hint">Київ: середній потік 50–70</p>
       </div>
     </section>
   );

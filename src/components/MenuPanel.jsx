@@ -51,7 +51,7 @@ export function MenuPanel({ rows, cupsPerDay, data, onDailyChange }) {
     <article className="card menu-card">
       <h2>Меню напоїв</h2>
       <p className="intro">
-        Порції на день множаться на період. Напої згруповані за розміром стакана.
+        Порції на день множаться на період. Напої згруповані за розміром стакана. Кава в зернах — окремо під еспресо і під фільтр.
       </p>
       <div className="menu-groups">
         {groups.map((group) => (
@@ -72,6 +72,9 @@ export function MenuPanel({ rows, cupsPerDay, data, onDailyChange }) {
         <br />
         <strong>За період:</strong> {formatNumber(data.totalPeriod)} напоїв,
         {' '}із них takeaway ≈ {formatNumber(Math.round(data.totalPeriod * data.takeaway))}.
+        <br />
+        Кава: {formatNumber(data.espressoDaily)} еспресо-напоїв і {formatNumber(data.filterDaily)} фільтр на день,
+        {' '}ще {formatNumber(data.otherDaily)} — чай і какао.
       </div>
     </article>
   );
