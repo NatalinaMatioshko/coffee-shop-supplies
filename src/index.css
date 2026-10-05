@@ -65,8 +65,14 @@ h2 { font-size: 18px; margin: 0 0 6px; }
 .group h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--moss); margin: 0 0 10px; }
 .items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .item { border: 1px solid var(--line); border-radius: 13px; padding: 13px; background: #fff; }
+.item.is-bought { background: #eef0ea; }
+.item.is-bought h4, .item.is-bought .amount, .item.is-bought .item-price { text-decoration: line-through; opacity: .7; }
 .item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.item-heading { min-width: 0; flex: 1; }
 .item h4 { font-size: 14px; margin: 0; font-weight: 700; }
+.bought-toggle { display: flex; align-items: center; gap: 7px; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--moss); cursor: pointer; }
+.bought-toggle input { width: 16px; height: 16px; accent-color: var(--pine); cursor: pointer; }
+.item-link { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--teal); }
 .icon { color: var(--moss); flex-shrink: 0; }
 .item-icon { color: var(--teal); }
 .amount { font-size: 22px; font-weight: 800; letter-spacing: -.04em; margin: 12px 0 3px; }

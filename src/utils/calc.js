@@ -56,10 +56,13 @@ function priced(needed, catalog) {
 function supplyCard(item, extraDetail = []) {
   if (!item || item.buy <= 0) return null;
   return {
+    id: item.id,
     title: item.title,
     icon: item.icon || 'package',
     amount: item.amount,
     price: item.cost > 0 ? formatMoney(item.cost) : '',
+    cost: item.cost || 0,
+    url: item.url || '',
     detail: extraDetail.filter(Boolean),
   };
 }
@@ -177,6 +180,7 @@ export function compute(rows, { days, reserve, takeaway }) {
   const teaShare = CHAMPS.teas.length ? 1 / CHAMPS.teas.length : 0;
   const teas = CHAMPS.teas.map((catalog) => ({
     ...priced(teaNeeded * teaShare, catalog),
+    key: catalog.key,
     share: teaShare,
     icon: catalog.icon,
     note: catalog.note,
@@ -194,6 +198,7 @@ export function compute(rows, { days, reserve, takeaway }) {
     { key: 'banana', share: USAGE.milk.banana, catalog: SUPPLIES.milkBanana, icon: 'banana' },
   ].map((entry) => ({
     ...priced(milkNeeded * entry.share, entry.catalog),
+    key: entry.key,
     share: entry.share,
     icon: entry.icon,
   }));
@@ -240,10 +245,12 @@ export function compute(rows, { days, reserve, takeaway }) {
     trash120: priced(WISHLIST_USAGE.trash120PerWeek * weeks, WISHLIST.trash120),
     matchaSet: priced(1, WISHLIST.matchaSet),
     matchaSieve: priced(1, WISHLIST.matchaSieve),
+    teapot: priced(1, WISHLIST.teapot),
     towelHolder: priced(1, WISHLIST.towelHolder),
   };
   const wishlistTeas = WISHLIST.teas.map((catalog) => ({
     ...priced(catalog.pack, catalog),
+    key: catalog.key,
     icon: catalog.icon,
     note: catalog.note,
   }));
@@ -304,8 +311,10 @@ export function buildResultGroups(data) {
   const cups = data.cups
     .filter((cup) => cup.buy > 0)
     .map((cup) => ({
+      id: `cup-${cup.size}`,
       title: `Стакан ${cup.size} мл`,
       icon: 'cupSoda',
+      cost: cup.cost,
       amount: formatPackBuy(cup.packs, cup.buy, 'шт.'),
       price: cup.cost > 0 ? formatMoney(cup.cost) : '',
       detail: [
@@ -319,8 +328,10 @@ export function buildResultGroups(data) {
   const lids = data.lids
     .filter((lid) => lid.buy > 0)
     .map((lid) => ({
+      id: `lid-${lid.lidId}`,
       title: `${lid.title} · ${lid.forCups}`,
       icon: 'circleDot',
+      cost: lid.cost,
       amount: formatPackBuy(lid.packs, lid.buy, 'шт.'),
       price: lid.cost > 0 ? formatMoney(lid.cost) : '',
       detail: [
@@ -333,6 +344,7 @@ export function buildResultGroups(data) {
   const champs = [
     supplyCard({
       ...data.matcha,
+      id: 'champs-matcha',
       icon: 'leaf',
       amount: formatPackBuy(data.matcha.packs, data.matcha.buy, 'г'),
     }, [
@@ -342,6 +354,7 @@ export function buildResultGroups(data) {
     ]),
     ...data.teas.map((item) => supplyCard({
       ...item,
+      id: `champs-tea-${item.key}`,
       amount: formatPackBuy(item.packs, item.buy, 'г'),
     }, [
       item.note,
@@ -350,6 +363,7 @@ export function buildResultGroups(data) {
     ])),
     supplyCard({
       ...data.milkCleaner,
+      id: 'champs-milk-cleaner',
       icon: 'droplets',
       amount: formatPackBuy(
         data.milkCleaner.packs,
@@ -365,6 +379,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.groupCleaner,
+      id: 'champs-group-cleaner',
       icon: 'flaskConical',
       amount: formatPackBuy(
         data.groupCleaner.packs,
@@ -384,6 +399,7 @@ export function buildResultGroups(data) {
     .filter((item) => item.buy > 0)
     .map((item) => supplyCard({
       ...item,
+      id: `milk-${item.key}`,
       amount: `${formatNumber(item.packs)} ${plural(item.packs, 'літр', 'літри', 'літрів')}`,
     }, [
       `${Math.round(item.share * 100)}% від молочних напоїв`,
@@ -394,6 +410,7 @@ export function buildResultGroups(data) {
   const small = [
     supplyCard({
       ...data.sleeve,
+      id: 'small-sleeve',
       icon: 'shirt',
       amount: formatPackBuy(data.sleeve.packs, data.sleeve.buy, 'шт.'),
     }, [
@@ -402,6 +419,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.napkin,
+      id: 'small-napkin',
       icon: 'layers',
       amount: formatPackBuy(data.napkin.packs, data.napkin.buy, 'шт.'),
     }, [
@@ -410,6 +428,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.stirrer,
+      id: 'small-stirrer',
       icon: 'utensils',
       amount: formatPackBuy(data.stirrer.packs, data.stirrer.buy, 'шт.'),
     }, [
@@ -418,6 +437,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.straw,
+      id: 'small-straw',
       icon: 'cylinder',
       amount: formatPackBuy(data.straw.packs, data.straw.buy, 'шт.'),
     }, [
@@ -426,6 +446,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.maika,
+      id: 'small-maika',
       icon: 'shoppingBag',
       amount: formatPackBuy(data.maika.packs, data.maika.buy, 'шт.'),
     }, [
@@ -434,6 +455,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.sugar,
+      id: 'small-sugar',
       icon: 'candy',
       amount: formatPackBuy(data.sugar.packs, data.sugar.buy, 'шт.'),
     }, [
@@ -442,6 +464,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.carrier2,
+      id: 'small-carrier2',
       icon: 'package',
       amount: formatPackBuy(data.carrier2.packs, data.carrier2.buy, 'шт.'),
     }, [
@@ -450,6 +473,7 @@ export function buildResultGroups(data) {
     ]),
     supplyCard({
       ...data.carrier4,
+      id: 'small-carrier4',
       icon: 'package',
       amount: formatPackBuy(data.carrier4.packs, data.carrier4.buy, 'шт.'),
     }, [
@@ -521,6 +545,7 @@ export function buildExtraItems(data) {
   return [
     supplyCard({
       ...data.extras.cloth,
+      id: 'extra-cloth',
       icon: 'paintbrush',
       amount: formatPackBuy(data.extras.cloth.packs, data.extras.cloth.buy, 'шт.'),
     }, [
@@ -529,6 +554,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.gloves,
+      id: 'extra-gloves',
       icon: 'hand',
       amount: formatPackBuy(data.extras.gloves.packs, data.extras.gloves.buy, 'шт.'),
     }, [
@@ -537,6 +563,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.sanitizer,
+      id: 'extra-sanitizer',
       icon: 'sprayCan',
       amount: formatPackBuy(
         data.extras.sanitizer.packs,
@@ -552,6 +579,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.dishSoap,
+      id: 'extra-dishSoap',
       icon: 'bath',
       amount: formatPackBuy(
         data.extras.dishSoap.packs,
@@ -567,6 +595,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.kraftBag,
+      id: 'extra-kraftBag',
       icon: 'shoppingBag',
       amount: formatPackBuy(data.extras.kraftBag.packs, data.extras.kraftBag.buy, 'шт.'),
     }, [
@@ -575,6 +604,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.dessertBox,
+      id: 'extra-dessertBox',
       icon: 'box',
       amount: formatPackBuy(data.extras.dessertBox.packs, data.extras.dessertBox.buy, 'шт.'),
     }, [
@@ -583,6 +613,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.dessertLid,
+      id: 'extra-dessertLid',
       icon: 'circle',
       amount: formatPackBuy(data.extras.dessertLid.packs, data.extras.dessertLid.buy, 'шт.'),
     }, [
@@ -591,6 +622,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.toiletSoap,
+      id: 'extra-toiletSoap',
       icon: 'droplets',
       amount: formatPackBuy(
         data.extras.toiletSoap.packs,
@@ -606,6 +638,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.toiletPaper,
+      id: 'extra-toiletPaper',
       icon: 'scrollText',
       amount: formatPackBuy(data.extras.toiletPaper.packs, data.extras.toiletPaper.buy, 'рул.'),
     }, [
@@ -614,6 +647,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.wetWipes,
+      id: 'extra-wetWipes',
       icon: 'droplet',
       amount: formatPackBuy(data.extras.wetWipes.packs, data.extras.wetWipes.buy, 'шт.'),
     }, [
@@ -623,6 +657,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.cleaningWipes,
+      id: 'extra-cleaningWipes',
       icon: 'sparkles',
       amount: formatPackBuy(data.extras.cleaningWipes.packs, data.extras.cleaningWipes.buy, 'шт.'),
     }, [
@@ -632,6 +667,7 @@ export function buildExtraItems(data) {
     ]),
     supplyCard({
       ...data.extras.paperTowel,
+      id: 'extra-paperTowel',
       icon: 'scrollText',
       amount: formatPackBuy(data.extras.paperTowel.packs, data.extras.paperTowel.buy, 'шт.'),
     }, [
@@ -647,6 +683,7 @@ export function buildCoffeeItems(data) {
   return [
     supplyCard({
       ...data.coffeeEspresso,
+      id: 'coffee-espresso',
       icon: 'bean',
       amount: `${formatOne(data.coffeeEspresso.buy / 1000)} кг`,
     }, [
@@ -656,6 +693,7 @@ export function buildCoffeeItems(data) {
     ]),
     supplyCard({
       ...data.coffeeFilter,
+      id: 'coffee-filter',
       icon: 'funnel',
       amount: `${formatOne(data.coffeeFilter.buy / 1000)} кг`,
     }, [
@@ -670,6 +708,7 @@ export function buildWishlistItems(data) {
   return [
     supplyCard({
       ...data.wishlist.trash60,
+      id: 'wish-trash60',
       icon: 'trash2',
       amount: formatPackBuy(data.wishlist.trash60.packs, data.wishlist.trash60.buy, 'шт.'),
     }, [
@@ -679,6 +718,7 @@ export function buildWishlistItems(data) {
     ]),
     supplyCard({
       ...data.wishlist.trash120,
+      id: 'wish-trash120',
       icon: 'trash2',
       amount: formatPackBuy(data.wishlist.trash120.packs, data.wishlist.trash120.buy, 'шт.'),
     }, [
@@ -688,6 +728,7 @@ export function buildWishlistItems(data) {
     ]),
     supplyCard({
       ...data.wishlist.matchaSet,
+      id: 'wish-matchaSet',
       icon: 'leaf',
       amount: formatPackBuy(
         data.wishlist.matchaSet.packs,
@@ -703,6 +744,7 @@ export function buildWishlistItems(data) {
     ]),
     supplyCard({
       ...data.wishlist.matchaSieve,
+      id: 'wish-matchaSieve',
       icon: 'funnel',
       amount: formatPackBuy(
         data.wishlist.matchaSieve.packs,
@@ -717,7 +759,24 @@ export function buildWishlistItems(data) {
       `Одноразово на бар · ${formatMoney(data.wishlist.matchaSieve.packPrice)} · арт. ${WISHLIST.matchaSieve.sku}`,
     ]),
     supplyCard({
+      ...data.wishlist.teapot,
+      id: 'wish-teapot',
+      icon: 'coffee',
+      amount: formatPackBuy(
+        data.wishlist.teapot.packs,
+        null,
+        null,
+        'чайник',
+        'чайники',
+        'чайників',
+      ),
+    }, [
+      WISHLIST.teapot.note,
+      `Одноразово на бар · ${formatMoney(data.wishlist.teapot.packPrice)} · арт. ${WISHLIST.teapot.sku}`,
+    ]),
+    supplyCard({
       ...data.wishlist.towelHolder,
+      id: 'wish-towelHolder',
       icon: 'paperclip',
       amount: formatPackBuy(
         data.wishlist.towelHolder.packs,
@@ -733,6 +792,7 @@ export function buildWishlistItems(data) {
     ]),
     ...data.wishlistTeas.map((item) => supplyCard({
       ...item,
+      id: `wish-tea-${item.key}`,
       amount: formatPackBuy(item.packs, item.buy, 'г'),
     }, [
       item.note,

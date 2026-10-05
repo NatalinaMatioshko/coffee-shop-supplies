@@ -4,11 +4,25 @@ import { buildCoffeeItems, buildExtraItems, buildResultGroups, buildWishlistItem
 import { formatMoney, formatNumber, plural } from '../utils/format.js';
 import { Icon } from './Icon.jsx';
 
-function ResultItem({ item }) {
+function ResultItem({ item, bought, onToggleBought }) {
+  const isBought = Boolean(bought?.[item.id]);
+  const checkId = `bought-${item.id}`;
+
   return (
-    <article className="item">
+    <article className={`item${isBought ? ' is-bought' : ''}`}>
       <div className="item-top">
-        <h4>{item.title}</h4>
+        <div className="item-heading">
+          <h4>{item.title}</h4>
+          <label className="bought-toggle" htmlFor={checkId}>
+            <input
+              id={checkId}
+              type="checkbox"
+              checked={isBought}
+              onChange={() => onToggleBought?.(item.id)}
+            />
+            {isBought ? 'Придбано' : 'Не придбано'}
+          </label>
+        </div>
         <Icon name={item.icon} className="icon item-icon" />
       </div>
       <p className="amount">{item.amount}</p>
@@ -21,24 +35,34 @@ function ResultItem({ item }) {
           </span>
         ))}
       </p>
+      {item.url ? (
+        <a className="item-link" href={item.url} target="_blank" rel="noreferrer">
+          Відкрити товар
+        </a>
+      ) : null}
     </article>
   );
 }
 
-export function ResultsPanel({ data }) {
+export function ResultsPanel({ data, bought, onToggleBought }) {
   const groups = buildResultGroups(data);
 
   return (
     <article className="card results-card">
       <h2>Що закупити</h2>
-      <p className="intro">Закупівля округлена вгору до фасовки, як продають Petrovka і 3 Champs. Кава під еспресо і під фільтр — окремо в кінці.</p>
+      <p className="intro">Закупівля округлена вгору до фасовки, як продають Petrovka і 3 Champs. Кава під еспресо і під фільтр — окремо в кінці. Галочка «придбано» зберігається в цьому браузері.</p>
       <div>
         {groups.map((group) => (
           <section className="group" key={group.title}>
             <h3>{group.title}</h3>
             <div className="items">
               {group.items.map((item) => (
-                <ResultItem key={item.title} item={item} />
+                <ResultItem
+                  key={item.id || item.title}
+                  item={item}
+                  bought={bought}
+                  onToggleBought={onToggleBought}
+                />
               ))}
             </div>
             {group.total ? (
@@ -69,7 +93,7 @@ export function ResultsPanel({ data }) {
   );
 }
 
-export function ExtraExpensesPanel({ data }) {
+export function ExtraExpensesPanel({ data, bought, onToggleBought }) {
   const items = buildExtraItems(data);
 
   if (!items.length) return null;
@@ -83,7 +107,12 @@ export function ExtraExpensesPanel({ data }) {
       <section className="group">
         <div className="items">
           {items.map((item) => (
-            <ResultItem key={item.title} item={item} />
+            <ResultItem
+              key={item.id || item.title}
+              item={item}
+              bought={bought}
+              onToggleBought={onToggleBought}
+            />
           ))}
         </div>
         {data.extraCost > 0 ? (
@@ -103,7 +132,7 @@ export function ExtraExpensesPanel({ data }) {
   );
 }
 
-export function CoffeePanel({ data }) {
+export function CoffeePanel({ data, bought, onToggleBought }) {
   const items = buildCoffeeItems(data);
   const coffeeKg = (data.coffeeEspresso.buy + data.coffeeFilter.buy) / 1000;
 
@@ -131,7 +160,12 @@ export function CoffeePanel({ data }) {
         <section className="group">
           <div className="items coffee-items">
             {items.map((item) => (
-              <ResultItem key={item.title} item={item} />
+              <ResultItem
+                key={item.id || item.title}
+                item={item}
+                bought={bought}
+                onToggleBought={onToggleBought}
+              />
             ))}
           </div>
           {data.coffeeCost > 0 ? (
@@ -164,8 +198,12 @@ export function CoffeePanel({ data }) {
   );
 }
 
-export function WishlistPanel({ data }) {
+export function WishlistPanel({ data, bought = {}, onToggleBought }) {
   const items = buildWishlistItems(data);
+  const remainingCost = items.reduce((sum, item) => (
+    sum + (bought[item.id] ? 0 : item.cost || 0)
+  ), 0);
+  const boughtCount = items.filter((item) => bought[item.id]).length;
 
   if (!items.length) return null;
 
@@ -173,19 +211,28 @@ export function WishlistPanel({ data }) {
     <article className="card extra-card wishlist-card">
       <h2>Wish list</h2>
       <p className="intro">
-        На майбутнє, не входить у суми вище. Ціна й кількість є, у розрахунок закупівлі не додаються.
+        На майбутнє, не входить у суми вище. Позначте, що вже купили — відмітки залишаться в цьому браузері.
       </p>
       <section className="group">
         <div className="items">
           {items.map((item) => (
-            <ResultItem key={item.title} item={item} />
+            <ResultItem
+              key={item.id || item.title}
+              item={item}
+              bought={bought}
+              onToggleBought={onToggleBought}
+            />
           ))}
         </div>
         {data.wishlistCost > 0 ? (
           <div className="price-total wishlist-total">
             <div>
               <strong>Орієнтир wish list — не в сумі</strong>
-              <p>Пакети для сміття, набір і сито для матчі, холдер і додаткові чаї 3 Champs</p>
+              <p>
+                Пакети для сміття, набір і сито для матчі, заварник, холдер і додаткові чаї 3 Champs.
+                {' '}Придбано {formatNumber(boughtCount)} з {formatNumber(items.length)},
+                залишилось {formatMoney(remainingCost)}.
+              </p>
               <a href={PETROVKA_URL} target="_blank" rel="noreferrer">
                 Каталог Petrovka HoReCa
               </a>

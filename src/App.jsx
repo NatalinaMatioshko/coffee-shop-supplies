@@ -5,6 +5,7 @@ import { Hero } from './components/Hero.jsx';
 import { MenuPanel } from './components/MenuPanel.jsx';
 import { CoffeePanel, ExtraExpensesPanel, ResultsPanel, WishlistPanel } from './components/ResultsPanel.jsx';
 import { DEFAULT_CUPS_PER_DAY, MENU_ITEMS } from './data/constants.js';
+import { useBoughtItems } from './hooks/useBoughtItems.js';
 import { compute } from './utils/calc.js';
 import { parseCupsPerDay, parseDays, parseNonNegative } from './utils/format.js';
 
@@ -14,6 +15,7 @@ export default function App() {
   const [takeaway, setTakeaway] = useState(0.7);
   const [cupsPerDay, setCupsPerDay] = useState(DEFAULT_CUPS_PER_DAY);
   const [menu, setMenu] = useState(MENU_ITEMS);
+  const { bought, toggleBought } = useBoughtItems();
 
   const rows = useMemo(
     () => menu.map((item) => ({ ...item, total: item.daily * days })),
@@ -51,10 +53,10 @@ export default function App() {
         data={data}
         onDailyChange={handleDailyChange}
       />
-      <ResultsPanel data={data} />
-      <ExtraExpensesPanel data={data} />
-      <CoffeePanel data={data} />
-      <WishlistPanel data={data} />
+      <ResultsPanel data={data} bought={bought} onToggleBought={toggleBought} />
+      <ExtraExpensesPanel data={data} bought={bought} onToggleBought={toggleBought} />
+      <CoffeePanel data={data} bought={bought} onToggleBought={toggleBought} />
+      <WishlistPanel data={data} bought={bought} onToggleBought={toggleBought} />
       <FooterBar />
     </main>
   );
