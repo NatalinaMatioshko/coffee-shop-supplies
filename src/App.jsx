@@ -4,6 +4,7 @@ import { FooterBar } from './components/FooterBar.jsx';
 import { Hero } from './components/Hero.jsx';
 import { MenuPanel } from './components/MenuPanel.jsx';
 import { CoffeePanel, ExtraExpensesPanel, ResultsPanel, WishlistPanel } from './components/ResultsPanel.jsx';
+import { ShoppingList } from './components/ShoppingList.jsx';
 import { DEFAULT_CUPS_PER_DAY, MENU_ITEMS } from './data/constants.js';
 import { useBoughtItems } from './hooks/useBoughtItems.js';
 import { compute } from './utils/calc.js';
@@ -57,6 +58,7 @@ export default function App() {
       <ExtraExpensesPanel data={data} bought={bought} onToggleBought={toggleBought} />
       <CoffeePanel data={data} bought={bought} onToggleBought={toggleBought} />
       <WishlistPanel data={data} bought={bought} onToggleBought={toggleBought} />
+      <ShoppingList data={data} bought={bought} onToggleBought={toggleBought} />
       <FooterBar />
     </main>
   );

@@ -800,3 +800,16 @@ export function buildWishlistItems(data) {
     ])),
   ].filter(Boolean);
 }
+
+export function buildShoppingList(data) {
+  return [
+    ...buildResultGroups(data).map((group) => ({
+      title: group.title,
+      items: group.items,
+    })),
+    { title: 'Додаткові розходи', items: buildExtraItems(data) },
+    { title: 'Кава в зернах', items: buildCoffeeItems(data) },
+    { title: 'Wish list', items: buildWishlistItems(data) },
+  ].filter((group) => group.items.length > 0);
+}
+
