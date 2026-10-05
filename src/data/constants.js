@@ -128,11 +128,11 @@ export const MENU_ITEMS = [
   drink({ id: 'filterSmall', name: 'Фільтр 200 мл', icon: 'funnel', cupSize: 250, servingMl: 200, coffeeG: 12, coffeeKind: 'filter', daily: 5 }),
 
   drink({ id: 'cappuccinoLarge', name: 'Капучино 340', icon: 'milk', cupSize: 340, coffeeG: 18, milkMl: 250, daily: 8 }),
-  drink({ id: 'latteLarge', name: 'Лате 400', icon: 'cupSoda', cupSize: 340, servingMl: 400, coffeeG: 18, milkMl: 300, daily: 2 }),
   drink({ id: 'cocoaLarge', name: 'Какао вел.', icon: 'cookie', cupSize: 340, cocoaG: 30, milkMl: 280, daily: 2 }),
   drink({ id: 'tea', name: 'Чай', icon: 'leaf', cupSize: 340, teaBags: 1, daily: 4 }),
   drink({ id: 'filterMedium', name: 'Фільтр 300 мл', icon: 'funnel', cupSize: 340, servingMl: 300, coffeeG: 18, coffeeKind: 'filter', daily: 7 }),
 
+  drink({ id: 'latteLarge', name: 'Лате 400', icon: 'cupSoda', cupSize: 400, coffeeG: 18, milkMl: 300, daily: 2 }),
   drink({ id: 'filterLarge', name: 'Фільтр 400 мл', icon: 'funnel', cupSize: 400, coffeeG: 24, coffeeKind: 'filter', daily: 3 }),
 ];
 
