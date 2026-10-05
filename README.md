@@ -6,14 +6,14 @@ A procurement calculator for a café opening order. It turns a drink menu into a
 
 ## The problem
 
-Opening a coffee shop means guessing how much to buy before the first sale. Cups come in four sizes, lids do not match 1:1, takeaway is not 100% of drinks, and suppliers sell in packs of 15, 30, or 50 — not “exactly what the recipe needs.”
+Opening a coffee shop means guessing how much to buy before the first sale. Cups come in five sizes, lids do not match 1:1, takeaway is not 100% of drinks, and suppliers sell in packs of 15, 30, or 50 — not “exactly what the recipe needs.”
 
 This app is a working tool for that first order: change daily portions, and the purchase list updates with a safety reserve and a total in UAH.
 
 ## What it does
 
-- **Menu → cups by size.** Drinks are grouped by cup (110 / 180 / 250 / 340 ml). Only takeaway drinks count toward disposable cups; dine-in is assumed to use ceramic.
-- **Lids that actually fit.** 110 ml has no lid. 180 / 250 / 340 ml map to Petrovka models R-71, R-79, and R-80 — not a generic “one lid per cup.”
+- **Menu → cups by size.** Drinks are grouped by cup (110 / 180 / 250 / 340 / 400 ml). Only takeaway drinks count toward disposable cups; dine-in is assumed to use ceramic.
+- **Lids that actually fit.** 110 ml has no lid. 180 / 250 / 340 / 400 ml map to Petrovka models R-71, R-79, R-80, and R-90 — not a generic “one lid per cup.”
 - **Supplier math.** Quantities round up to real pack sizes. Line totals and a grand total use listed prices from [Petrovka HoReCa](https://petrovka-horeca.com.ua/) (cups, lids, milk, napkins, stirrers, sleeves, carriers) and [3 Champs Roastery](https://3champsroastery.com.ua/) (coffee, matcha, tea, milk-system cleaner).
 - **Milk mix.** Cow’s milk, lactose-free, oat, almond, coconut, and banana are split by configurable shares of the recipe milk volume.
 - **Espresso vs filter coffee.** Beans are split by drink type, with a Kyiv cup-volume forecast (about 50–70 drinks/day for a specialty café). There is no fixed 34 kg floor — the order follows the menu, a waste reserve, and 1 kg bags.

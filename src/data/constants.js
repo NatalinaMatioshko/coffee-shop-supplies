@@ -23,7 +23,7 @@ export const CUP_SOURCE = {
 export const LID_SOURCE = {
   name: 'Petrovka HoReCa',
   url: 'https://petrovka-horeca.com.ua/uk/kryshki-na-stakany-250-evro-340-ml-78-79-80-81-mm/',
-  note: 'Пластикові кришки під крафт-стакани',
+  note: 'Пластикові кришки під крафт-стакани, зокрема R-90 на 400 мл',
 };
 
 export const LID_CATALOG = {
@@ -57,6 +57,16 @@ export const LID_CATALOG = {
     diameter: 80,
     url: 'https://petrovka-horeca.com.ua/uk/kryshki-na-stakany-250-evro-340-ml-78-79-80-81-mm/',
   },
+  r90: {
+    title: 'R-90 чорна',
+    forCups: '400 мл',
+    sku: '103919',
+    pack: 50,
+    packPrice: 51,
+    unitPrice: 1.02,
+    diameter: 90,
+    url: 'https://petrovka-horeca.com.ua/uk/p679350948-kryshka-romb-kv90.html',
+  },
 };
 
 export const CUP_CATALOG = {
@@ -64,6 +74,7 @@ export const CUP_CATALOG = {
   180: { sku: '22942', pack: 50, packPrice: 99.5, unitPrice: 1.99, title: '180 мл двошаровий крафт', lidId: 'r71' },
   250: { sku: '22180', pack: 30, packPrice: 79, unitPrice: 2.63, title: '250 мл євро двошаровий крафт', lidId: 'r79' },
   340: { sku: '20629', pack: 15, packPrice: 51, unitPrice: 3.4, title: '340 мл двошаровий крафт', lidId: 'r80' },
+  400: { sku: '22155', pack: 30, packPrice: 89, unitPrice: 2.97, title: '400 мл двошаровий крафт', lidId: 'r90' },
 };
 
 export const RESERVE_OPTIONS = [
@@ -109,19 +120,20 @@ export const MENU_ITEMS = [
 
   drink({ id: 'cappuccino', name: 'Капучино 180', icon: 'milk', cupSize: 180, coffeeG: 9, milkMl: 120, daily: 12 }),
   drink({ id: 'flatwhite', name: 'Флет-вайт', icon: 'milk', cupSize: 180, coffeeG: 18, milkMl: 110, daily: 5 }),
-  drink({ id: 'filterSmall', name: 'Фільтр 200 мл', icon: 'funnel', cupSize: 180, servingMl: 200, coffeeG: 12, coffeeKind: 'filter', daily: 5 }),
 
   drink({ id: 'latte', name: 'Лате 250', icon: 'cupSoda', cupSize: 250, coffeeG: 9, milkMl: 180, daily: 3 }),
   drink({ id: 'oxamyt', name: 'Оксамит', icon: 'milk', cupSize: 250, coffeeG: 9, milkMl: 180, daily: 5 }),
   drink({ id: 'cocoaSmall', name: 'Какао мал.', icon: 'cookie', cupSize: 250, cocoaG: 20, milkMl: 200, daily: 3 }),
   drink({ id: 'longBlack', name: 'Лонг блек', icon: 'coffee', cupSize: 250, coffeeG: 18, daily: 1 }),
-  drink({ id: 'filterMedium', name: 'Фільтр 300 мл', icon: 'funnel', cupSize: 250, servingMl: 300, coffeeG: 18, coffeeKind: 'filter', daily: 7 }),
+  drink({ id: 'filterSmall', name: 'Фільтр 200 мл', icon: 'funnel', cupSize: 250, servingMl: 200, coffeeG: 12, coffeeKind: 'filter', daily: 5 }),
 
   drink({ id: 'cappuccinoLarge', name: 'Капучино 340', icon: 'milk', cupSize: 340, coffeeG: 18, milkMl: 250, daily: 8 }),
   drink({ id: 'latteLarge', name: 'Лате 400', icon: 'cupSoda', cupSize: 340, servingMl: 400, coffeeG: 18, milkMl: 300, daily: 2 }),
-  drink({ id: 'filterLarge', name: 'Фільтр 400 мл', icon: 'funnel', cupSize: 340, servingMl: 400, coffeeG: 24, coffeeKind: 'filter', daily: 3 }),
   drink({ id: 'cocoaLarge', name: 'Какао вел.', icon: 'cookie', cupSize: 340, cocoaG: 30, milkMl: 280, daily: 2 }),
   drink({ id: 'tea', name: 'Чай', icon: 'leaf', cupSize: 340, teaBags: 1, daily: 4 }),
+  drink({ id: 'filterMedium', name: 'Фільтр 300 мл', icon: 'funnel', cupSize: 340, servingMl: 300, coffeeG: 18, coffeeKind: 'filter', daily: 7 }),
+
+  drink({ id: 'filterLarge', name: 'Фільтр 400 мл', icon: 'funnel', cupSize: 400, coffeeG: 24, coffeeKind: 'filter', daily: 3 }),
 ];
 
 export const DEFAULT_CUPS_PER_DAY = MENU_ITEMS.reduce((sum, item) => sum + item.daily, 0);

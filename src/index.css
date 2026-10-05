@@ -40,7 +40,7 @@ input:focus, select:focus { outline: 3px solid var(--focus); border-color: var(-
 .hint { color: var(--muted); font-size: 12px; margin: 6px 0 0; }
 
 .menu-card { margin-bottom: 18px; }
-.menu-groups { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.menu-groups { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
 .menu-groups .group { margin-bottom: 0; }
 .results-card .items { grid-template-columns: repeat(3, 1fr); }
 .card { padding: 20px; }
