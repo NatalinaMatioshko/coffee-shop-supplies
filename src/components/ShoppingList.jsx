@@ -17,7 +17,7 @@ export function ShoppingList({ data, bought = {}, onToggleBought }) {
     <article className="card extra-card shopping-list">
       <h2>Список покупок</h2>
       <p className="intro">
-        Усі позиції одним списком. Галочка тут і на картках вище — та сама, зберігається в браузері.
+        Окремий чекліст для магазину. Галочки тут не залежать від карток вище і зберігаються в браузері.
       </p>
       {groups.map((group) => (
         <section className="shop-group" key={group.title}>

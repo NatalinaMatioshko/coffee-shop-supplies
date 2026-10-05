@@ -1,24 +1,24 @@
 import { useState } from 'react';
 
-const STORAGE_KEY = 'coffee-shop-supplies:bought';
+const DEFAULT_KEY = 'coffee-shop-supplies:bought';
 
-function readBought() {
+function readBought(storageKey) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(storageKey);
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
   }
 }
 
-export function useBoughtItems() {
-  const [bought, setBought] = useState(readBought);
+export function useBoughtItems(storageKey = DEFAULT_KEY) {
+  const [bought, setBought] = useState(() => readBought(storageKey));
 
   function toggleBought(id) {
     if (!id) return;
     setBought((current) => {
       const next = { ...current, [id]: !current[id] };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(storageKey, JSON.stringify(next));
       return next;
     });
   }

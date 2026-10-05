@@ -16,7 +16,8 @@ export default function App() {
   const [takeaway, setTakeaway] = useState(0.7);
   const [cupsPerDay, setCupsPerDay] = useState(DEFAULT_CUPS_PER_DAY);
   const [menu, setMenu] = useState(MENU_ITEMS);
-  const { bought, toggleBought } = useBoughtItems();
+  const { bought, toggleBought } = useBoughtItems('coffee-shop-supplies:bought');
+  const { bought: shopBought, toggleBought: toggleShopBought } = useBoughtItems('coffee-shop-supplies:shop-list');
 
   const rows = useMemo(
     () => menu.map((item) => ({ ...item, total: item.daily * days })),
@@ -58,7 +59,7 @@ export default function App() {
       <ExtraExpensesPanel data={data} bought={bought} onToggleBought={toggleBought} />
       <CoffeePanel data={data} bought={bought} onToggleBought={toggleBought} />
       <WishlistPanel data={data} bought={bought} onToggleBought={toggleBought} />
-      <ShoppingList data={data} bought={bought} onToggleBought={toggleBought} />
+      <ShoppingList data={data} bought={shopBought} onToggleBought={toggleShopBought} />
       <FooterBar />
     </main>
   );
